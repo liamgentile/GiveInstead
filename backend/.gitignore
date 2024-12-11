@@ -1,0 +1,24 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Typescript
+dist/
+*.tsbuildinfo
+
+# NestJS
+.nestjs/
+*.js
+*.d.ts
+
+# Environment files
+.env
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
