@@ -75,7 +75,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
                 {
                   icon: Heart,
                   name: "Favourite Charities",
-                  href: "#",
+                  href: "/favourite-charities",
                 },
                 {
                   icon: User,

@@ -4,6 +4,7 @@ import Landing from "./pages/Landing";
 import UserProfile from "./pages/UserProfile";
 import Occasions from "./pages/Occasions";
 import SearchCharities from "./pages/SearchCharities";
+import FavoriteCharities from "./pages/FavouriteCharities";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         />
         <Route path="/user-profile" element={<UserProfile />}></Route>
         <Route path="/search-charities" element={<SearchCharities />}></Route>
+        <Route path="/favourite-charities" element={<FavoriteCharities />}></Route>
       </Routes>
     </BrowserRouter>
   );

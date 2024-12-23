@@ -1,13 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, ObjectId } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type FavouriteCharityDocument = HydratedDocument<FavouriteCharity>;
 
 @Schema()
 export class FavouriteCharity {
-  @Prop({ required: true })
-  id: ObjectId;
-
   @Prop({ required: true })
   every_id: string;
 

@@ -2,6 +2,7 @@ import { Search, X, ExternalLink, Star, HeartHandshake } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
+import { useUser } from "@clerk/clerk-react";
 
 interface Charity {
   id: string;
@@ -13,6 +14,8 @@ interface Charity {
 }
 
 export default function SearchCharities() {
+  const { user } = useUser();
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [charities, setCharities] = useState<Charity[]>([]);
@@ -23,7 +26,10 @@ export default function SearchCharities() {
 
   useEffect(() => {
     const searchCharities = async () => {
-      if (!searchTerm) return;
+      if (!searchTerm) {
+        setCharities([]); 
+        return;
+      };
       setIsLoading(true);
       setError(null);
       try {
@@ -86,14 +92,42 @@ export default function SearchCharities() {
       website: "https://farmsanctuary.org/",
     },
   ];
-  const toggleFavorite = (e: React.MouseEvent, charityId: string) => {
+  const toggleFavorite = async (e: React.MouseEvent, charity: Charity) => {
     e.stopPropagation();
-    setFavorites((prev) =>
-      prev.includes(charityId)
-        ? prev.filter((id) => id !== charityId)
-        : [...prev, charityId]
-    );
+
+    // const isFavorited = favorites.includes(charity.id);
+
+    // Handle POST or DELETE based on the current favorite state
+    // if (isFavorited) {
+    //   // Remove from favorites (DELETE request)
+    //   await fetch(`/api/favourite-charity/${charity.id}`, {
+    //     method: "DELETE",
+    //   });
+    //   setFavorites((prev) => prev.filter((id) => id !== charity.id));
+    // } else {
+
+    console.log(charity);
+
+      const createDto = {
+        every_id: charity.id,
+        clerk_user_id: user?.id, 
+        name: charity.name,
+        website: charity.website,
+        description: charity.description,
+      };
+
+      await fetch("http://localhost:3000/favourite-charity", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(createDto),
+      });
+
+      setFavorites((prev) => [...prev, charity.id]);
+    // }
   };
+
   return (
     <Layout>
       <main className="flex-1 p-6 bg-gray-50">
@@ -144,7 +178,7 @@ export default function SearchCharities() {
                   className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden relative"
                 >
                   <button
-                    onClick={(e) => toggleFavorite(e, charity.id)}
+                    onClick={(e) => toggleFavorite(e, charity)}
                     className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white transition-colors z-10"
                   >
                     <Star
@@ -200,7 +234,7 @@ export default function SearchCharities() {
                   className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden border-2 border-green-100 relative"
                 >
                   <button
-                    onClick={(e) => toggleFavorite(e, charity.id)}
+                    onClick={(e) => toggleFavorite(e, charity)}
                     className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white transition-colors z-10"
                   >
                     <Star
@@ -298,7 +332,7 @@ export default function SearchCharities() {
                       </a>
 
                       <button
-                        onClick={(e) => toggleFavorite(e, selectedCharity.id)}
+                        onClick={(e) => toggleFavorite(e, selectedCharity)}
                         className="inline-flex items-center px-4 py-2 border-2 border-yellow-400 rounded-md hover:bg-yellow-50 transition-colors"
                       >
                         <Star
