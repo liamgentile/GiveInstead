@@ -2,7 +2,7 @@ import { SignUpButton } from "@clerk/clerk-react";
 
 import { Gift, Heart, Share2, ArrowRight } from "lucide-react";
 
-export default function LandingPage() {
+export default function Landing() {
   return (
     <div className="min-h-screen">
       <header className="relative bg-white py-12 px-6 sm:px-8 lg:px-16">
@@ -32,7 +32,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
           <div className="bg-white p-8 rounded-xl shadow-sm">
             <Gift className="h-12 w-12 text-green-800 mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Create Your Campaign</h3>
+            <h3 className="text-xl font-semibold mb-2">Create Your Occasion</h3>
             <p className="text-gray-600">
               Set up your giving campaign in minutes for any special occasion
             </p>

@@ -1,8 +1,9 @@
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import Dashboard from "./pages/Dashboard";
-import UserProfilePage from "./pages/UserProfilePage";
+import Landing from "./pages/Landing";
+import UserProfile from "./pages/UserProfile";
+import Occasions from "./pages/Occasions";
+import SearchCharities from "./pages/SearchCharities";
 
 export default function App() {
   return (
@@ -13,15 +14,16 @@ export default function App() {
           element={
             <>
               <SignedOut>
-                <LandingPage />
+                <Landing />
               </SignedOut>
               <SignedIn>
-                <Dashboard />
+                <Occasions />
               </SignedIn>
             </>
           }
         />
-        <Route path="/user-profile" element={<UserProfilePage />}></Route>
+        <Route path="/user-profile" element={<UserProfile />}></Route>
+        <Route path="/search-charities" element={<SearchCharities />}></Route>
       </Routes>
     </BrowserRouter>
   );
