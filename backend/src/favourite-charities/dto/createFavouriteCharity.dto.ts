@@ -4,4 +4,5 @@ export class CreateFavouriteCharityDto {
   name: string;
   website: string;
   description: string;
+  image_url: string;
 }

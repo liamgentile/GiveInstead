@@ -9,17 +9,43 @@ import {
   LogOut,
 } from "lucide-react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useClerk, useUser } from "@clerk/clerk-react";
+import { motion } from "framer-motion";
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  function MenuIcon() {
-    return isSidebarOpen ? <X size={24} /> : <Menu size={24} />;
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isSidebarOpen]);
+
+  // Prevent the layout from rendering until user data is available
+  if (!isLoaded) {
+    return <div className="text-center py-12">
+      <motion.div
+        animate={{
+          rotate: 360,
+        }}
+        transition={{
+          duration: 1,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+        className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full mx-auto"
+      />
+    </div>
   }
 
   return (
@@ -32,20 +58,28 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="p-2 rounded-md hover:bg-gray-100"
         >
-          <MenuIcon />
+          <Menu size={24} />
         </button>
       </header>
 
       <div className="flex h-[calc(100vh-56px)] justify-center lg:h-screen">
         <aside
           className={`
-              fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform 
-              lg:relative lg:translate-x-0 lg:shadow-none lg:block
-              ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-              transition-transform duration-200 ease-in-out lg:transition-none
-            `}
+            fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform 
+            lg:relative lg:translate-x-0 lg:shadow-none lg:block
+            ${isSidebarOpen ? "translate-x-0 w-full" : "-translate-x-full"}
+            transition-transform duration-200 ease-in-out lg:transition-none
+          `}
         >
-          <div className="h-full flex flex-col p-4">
+          <div className="h-full flex flex-col p-4 relative">
+            {/* Close button inside the sidebar */}
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-100 lg:hidden"
+            >
+              <X size={24} className="text-gray-600" />
+            </button>
+
             <div className="px-3 py-4 mb-6 hidden lg:block">
               <h2 className="text-xl font-bold text-gray-900">
                 Welcome back, {user?.firstName}
@@ -104,7 +138,9 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
             </nav>
           </div>
         </aside>
-        {children}
+        <div className={`flex-1 ${isSidebarOpen ? "overflow-hidden" : ""}`}>
+          {children}
+        </div>
       </div>
     </div>
   );

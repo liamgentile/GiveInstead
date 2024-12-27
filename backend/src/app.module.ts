@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { FavouriteCharityController } from './favourite-charities/controllers/favouriteCharities.controller';
 import { AppController } from './app.controller';
 import { FavouriteCharitiesModule } from './favourite-charities/modules/favouriteCharities.module';
 import { AppService } from './app.service';

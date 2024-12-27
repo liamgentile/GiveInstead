@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
 export type FavouriteCharityDocument = HydratedDocument<FavouriteCharity>;
 
@@ -11,14 +11,20 @@ export class FavouriteCharity {
   @Prop({ required: true })
   clerk_user_id: string;
 
-  @Prop({ required: true })
+  @Prop()
   name: string;
 
-  @Prop({ required: true })
+  @Prop()
   website: string;
 
   @Prop()
   description: string;
+
+  @Prop()
+  image_url: string;
+
+  @Prop()
+  note: string;
 }
 
 export const FavouriteCharitySchema = SchemaFactory.createForClass(FavouriteCharity);
