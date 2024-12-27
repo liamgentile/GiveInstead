@@ -5,7 +5,8 @@ import Layout from "../components/Layout";
 import { useUser } from "@clerk/clerk-react";
 
 interface Charity {
-  _id: string;
+  _id: string | null;
+  every_id: string;
   name: string;
   description: string;
   imageUrl: string;
@@ -22,7 +23,7 @@ export default function SearchCharities() {
   const [selectedCharity, setSelectedCharity] = useState<Charity | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<Charity[]>([]);
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -36,15 +37,16 @@ export default function SearchCharities() {
           throw new Error("Failed to fetch favorite charities");
         }
         const data = await response.json();
-        const favoriteIds = data.map((fav: any) => fav.every_id); 
-        setFavorites(favoriteIds);
+        setFavorites(data); // Store full charity objects, not just IDs
       } catch (err) {
         console.error(err);
         setError("Could not load favorite charities.");
       }
     };
 
-    fetchFavorites();
+    if (user?.id) {
+      fetchFavorites();
+    }
   }, [user?.id]);
 
   useEffect(() => {
@@ -57,7 +59,6 @@ export default function SearchCharities() {
       setError(null);
       try {
         const everydotorgAPIKey = import.meta.env.VITE_EVERY_CHARITY_KEY;
-
         const response = await fetch(
           `https://partners.every.org/v0.2/search/${searchTerm}?apiKey=${everydotorgAPIKey}`
         );
@@ -65,15 +66,14 @@ export default function SearchCharities() {
 
         const fetchedCharities: Charity[] = data.nonprofits.map(
           (charity: any) => ({
-            _id: charity.ein,
+            _id: null, // You may want to handle _id if the response doesn't provide it
+            every_id: charity.ein,
             name: charity.name,
             description: charity.description,
             imageUrl: charity.coverImageUrl,
             website: charity.websiteUrl,
           })
         );
-
-        console.log(fetchedCharities);
 
         setCharities(fetchedCharities);
       } catch (err) {
@@ -86,9 +86,11 @@ export default function SearchCharities() {
     const debounce = setTimeout(searchCharities, 500);
     return () => clearTimeout(debounce);
   }, [searchTerm]);
+
   const featuredCharities: Charity[] = [
     {
-      _id: "822281466",
+      _id: null,
+      every_id: "822281466",
       name: "Wild Animal Initiative",
       description:
         "We are dedicated to finding evidence-backed ways to improve the lives of animals in the wild.  We depend on individual donors to help us make life better for wild animals. To a small nonprofit working hard on a big problem, your support is more crucial now than ever!",
@@ -97,7 +99,8 @@ export default function SearchCharities() {
       website: "https://wildanimalinitiative.org",
     },
     {
-      _id: "873020380",
+      _id: null,
+      every_id: "873020380",
       name: "Aquatic Life Institute",
       description:
         "Aquatic Life Institute was formed to specifically advance animal welfare for the nearly 500 billion farmed fish and shrimp, and 2-3 trillion wild aquatic animals in the global food system.",
@@ -106,7 +109,8 @@ export default function SearchCharities() {
       website: "https://ali.fish",
     },
     {
-      _id: "510292919",
+      _id: null,
+      every_id: "510292919",
       name: "Farm Sanctuary",
       description:
         "Farm Sanctuary fights the disastrous effects of animal agriculture on animals, the environment, social justice, and public health through rescue, education, and advocacy.",
@@ -115,41 +119,53 @@ export default function SearchCharities() {
       website: "https://farmsanctuary.org/",
     },
   ];
+
   const toggleFavorite = async (e: React.MouseEvent, charity: Charity) => {
     e.stopPropagation();
+    const isFavorited = favorites.some((fav) => fav.every_id === charity.every_id);
+  
+    try {
+      if (isFavorited) {
+        const charityToDelete = favorites.find((fav) => fav.every_id === charity.every_id);
+        // Unfavorite logic
+        const response = await fetch(`http://localhost:3000/favourite-charity/${charityToDelete?._id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+  
+        if (!response.ok) throw new Error("Failed to unfavorite charity");
+  
+        setFavorites((prev) => prev.filter((fav) => fav.every_id !== charity.every_id));
+      } else {
+        // Favorite logic
+        const createDto = {
+          every_id: charity.every_id,
+          clerk_user_id: user?.id,
+          name: charity.name,
+          website: charity.website,
+          description: charity.description,
+          image_url: charity.imageUrl,
+        };
+  
+        const response = await fetch("http://localhost:3000/favourite-charity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(createDto),
+        });
+  
+        if (!response.ok) throw new Error("Failed to favorite charity");
+  
+        const createdCharity = await response.json(); 
+        setFavorites((prev) => [
+          ...prev,
+          createdCharity,  
+        ]);
 
-    const isFavorited = favorites.includes(charity._id);
-
-    if (isFavorited) {
-      await fetch(`http://localhost:3000/favourite-charity/${charity._id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      setFavorites((prev) => prev.filter((_id) => _id !== charity._id));
-    } else {
-
-    console.log(charity);
-
-    const createDto = {
-      every_id: charity._id,
-      clerk_user_id: user?.id,
-      name: charity.name,
-      website: charity.website,
-      description: charity.description,
-      image_url: charity.imageUrl,
-    };
-
-    await fetch("http://localhost:3000/favourite-charity", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(createDto),
-    });
-
-    setFavorites((prev) => [...prev, charity._id]);
+        console.log(favorites);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
     }
   };
 
@@ -194,8 +210,8 @@ export default function SearchCharities() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {charities.map((charity) => (
                 <motion.div
-                  key={charity._id}
-                  layoutId={charity._id}
+                  key={charity.every_id}
+                  layoutId={charity.every_id}
                   onClick={() => {
                     setSelectedCharity(charity);
                     setIsModalOpen(true);
@@ -209,7 +225,9 @@ export default function SearchCharities() {
                     <Star
                       size={20}
                       className={`transition-colors ${
-                        favorites.includes(charity._id)
+                        favorites.some(
+                          (fav) => fav.every_id === charity.every_id
+                        )
                           ? "fill-yellow-400 text-yellow-400"
                           : "text-gray-400"
                       }`}
@@ -250,8 +268,8 @@ export default function SearchCharities() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredCharities.map((charity) => (
                 <motion.div
-                  key={charity._id}
-                  layoutId={charity._id}
+                  key={charity.every_id}
+                  layoutId={charity.every_id}
                   onClick={() => {
                     setSelectedCharity(charity);
                     setIsModalOpen(true);
@@ -265,7 +283,9 @@ export default function SearchCharities() {
                     <Star
                       size={20}
                       className={`transition-colors ${
-                        favorites.includes(charity._id)
+                        favorites.some(
+                          (fav) => fav.every_id === charity.every_id
+                        )
                           ? "fill-yellow-400 text-yellow-400"
                           : "text-gray-400"
                       }`}
@@ -312,7 +332,7 @@ export default function SearchCharities() {
                 className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
               >
                 <motion.div
-                  layoutId={selectedCharity._id}
+                  layoutId={selectedCharity.every_id}
                   className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                 >
                   <div className="p-6">
@@ -363,12 +383,16 @@ export default function SearchCharities() {
                         <Star
                           size={16}
                           className={`mr-2 transition-colors ${
-                            favorites.includes(selectedCharity._id)
+                            favorites.some(
+                              (fav) => fav.every_id === selectedCharity.every_id
+                            )
                               ? "fill-yellow-400 text-yellow-400"
                               : "text-yellow-400"
                           }`}
                         />
-                        {favorites.includes(selectedCharity._id)
+                        {favorites.some(
+                          (fav) => fav.every_id === selectedCharity.every_id
+                        )
                           ? "Remove from Favorites"
                           : "Add to Favorites"}
                       </button>
