@@ -31,7 +31,6 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
     };
   }, [isSidebarOpen]);
 
-  // Prevent the layout from rendering until user data is available
   if (!isLoaded) {
     return <div className="text-center py-12">
       <motion.div
@@ -72,7 +71,6 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
           `}
         >
           <div className="h-full flex flex-col p-4 relative">
-            {/* Close button inside the sidebar */}
             <button
               onClick={() => setIsSidebarOpen(false)}
               className="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-100 lg:hidden"
