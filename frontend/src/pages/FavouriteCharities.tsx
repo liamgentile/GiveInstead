@@ -1,4 +1,10 @@
-import { Heart, Trash2, PenSquare, AlertCircle } from "lucide-react";
+import {
+  Heart,
+  Trash2,
+  PenSquare,
+  AlertCircle,
+  HeartHandshake,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
@@ -86,7 +92,6 @@ export default function FavoriteCharities() {
     }
   };
 
-  // Function to remove charity from favorites
   const removeFromFavorites = async (_id: string) => {
     try {
       await fetch(`http://localhost:3000/favourite-charity/${_id}`, {
@@ -99,7 +104,6 @@ export default function FavoriteCharities() {
       setFavorites((prevFavorites) =>
         prevFavorites.filter((charity) => charity._id !== _id)
       );
-
     } catch (err) {
       setError("Failed to remove from favourite");
     }
@@ -169,11 +173,18 @@ export default function FavoriteCharities() {
                   className="bg-white rounded-lg shadow-sm p-4 sm:p-6"
                 >
                   <div className="flex flex-col sm:flex-row sm:gap-6">
-                    <img
-                      src={charity.image_url}
-                      alt={charity.name}
-                      className="w-full sm:w-48 h-48 object-cover rounded-lg mb-4 sm:mb-0"
-                    />
+                    {charity.image_url ? (
+                      <img
+                        src={charity.image_url}
+                        alt={charity.name}
+                        className="w-full sm:w-48 h-48 object-cover rounded-lg mb-4 sm:mb-0"
+                      />
+                    ) : (
+                      <HeartHandshake
+                        size={48}
+                        className="w-full sm:w-48 h-48 object-cover rounded-lg mb-4 sm:mb-0"
+                      />
+                    )}
 
                     <div className="flex-1">
                       <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2">

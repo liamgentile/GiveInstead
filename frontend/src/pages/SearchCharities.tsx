@@ -37,7 +37,7 @@ export default function SearchCharities() {
           throw new Error("Failed to fetch favorite charities");
         }
         const data = await response.json();
-        setFavorites(data); // Store full charity objects, not just IDs
+        setFavorites(data); 
       } catch (err) {
         console.error(err);
         setError("Could not load favorite charities.");
@@ -66,7 +66,7 @@ export default function SearchCharities() {
 
         const fetchedCharities: Charity[] = data.nonprofits.map(
           (charity: any) => ({
-            _id: null, // You may want to handle _id if the response doesn't provide it
+            _id: null,
             every_id: charity.ein,
             name: charity.name,
             description: charity.description,
@@ -127,7 +127,7 @@ export default function SearchCharities() {
     try {
       if (isFavorited) {
         const charityToDelete = favorites.find((fav) => fav.every_id === charity.every_id);
-        // Unfavorite logic
+        
         const response = await fetch(`http://localhost:3000/favourite-charity/${charityToDelete?._id}`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -137,7 +137,6 @@ export default function SearchCharities() {
   
         setFavorites((prev) => prev.filter((fav) => fav.every_id !== charity.every_id));
       } else {
-        // Favorite logic
         const createDto = {
           every_id: charity.every_id,
           clerk_user_id: user?.id,
@@ -242,7 +241,7 @@ export default function SearchCharities() {
                     />
                   ) : (
                     <HeartHandshake
-                      size={48} // Adjust the size as needed
+                      size={48} 
                       className="w-full h-48 text-gray-400 mx-auto"
                     />
                   )}
