@@ -1,18 +1,9 @@
-import { Search, X, ExternalLink, Star, HeartHandshake } from "lucide-react";
+import { Search, X, ExternalLink, Heart, HeartHandshake } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
 import { useUser } from "@clerk/clerk-react";
-
-interface Charity {
-  _id: string | null;
-  every_id: string;
-  name: string;
-  description: string;
-  imageUrl: string;
-  website: string;
-  isFavorite?: boolean;
-}
+import Charity from "../interfaces/Charity";
 
 export default function SearchCharities() {
   const { user } = useUser();
@@ -70,7 +61,7 @@ export default function SearchCharities() {
             every_id: charity.ein,
             name: charity.name,
             description: charity.description,
-            imageUrl: charity.coverImageUrl,
+            image_url: charity.coverImageUrl,
             website: charity.websiteUrl,
           })
         );
@@ -89,32 +80,32 @@ export default function SearchCharities() {
 
   const featuredCharities: Charity[] = [
     {
-      _id: null,
+      _id: '',
       every_id: "822281466",
       name: "Wild Animal Initiative",
       description:
         "We are dedicated to finding evidence-backed ways to improve the lives of animals in the wild.  We depend on individual donors to help us make life better for wild animals. To a small nonprofit working hard on a big problem, your support is more crucial now than ever!",
-      imageUrl:
+      image_url:
         "https://res.cloudinary.com/everydotorg/image/upload/f_auto,c_limit,w_1920,q_auto/profile_pics/ap5t5cjcylr7xktnldno",
       website: "https://wildanimalinitiative.org",
     },
     {
-      _id: null,
+      _id: '',
       every_id: "873020380",
       name: "Aquatic Life Institute",
       description:
         "Aquatic Life Institute was formed to specifically advance animal welfare for the nearly 500 billion farmed fish and shrimp, and 2-3 trillion wild aquatic animals in the global food system.",
-      imageUrl:
+      image_url:
         "https://res.cloudinary.com/everydotorg/image/upload/f_auto,c_limit,w_1920,q_auto/profile_pics/kbfxjmzl39rlrs4nxnp3",
       website: "https://ali.fish",
     },
     {
-      _id: null,
+      _id: '',
       every_id: "510292919",
       name: "Farm Sanctuary",
       description:
         "Farm Sanctuary fights the disastrous effects of animal agriculture on animals, the environment, social justice, and public health through rescue, education, and advocacy.",
-      imageUrl:
+      image_url:
         "https://assets.farmsanctuary.org/content/uploads/2024/12/06092318/2024_09_13_FSAC_Grace_and_Jodean_Pigs_DM_4638-scaled-e1733495282772-1600x911.jpg",
       website: "https://farmsanctuary.org/",
     },
@@ -143,7 +134,7 @@ export default function SearchCharities() {
           name: charity.name,
           website: charity.website,
           description: charity.description,
-          image_url: charity.imageUrl,
+          image_url: charity.image_url,
         };
   
         const response = await fetch("http://localhost:3000/favourite-charity", {
@@ -221,21 +212,21 @@ export default function SearchCharities() {
                     onClick={(e) => toggleFavorite(e, charity)}
                     className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white transition-colors z-10"
                   >
-                    <Star
+                    <Heart
                       size={20}
                       className={`transition-colors ${
                         favorites.some(
                           (fav) => fav.every_id === charity.every_id
                         )
-                          ? "fill-yellow-400 text-yellow-400"
+                          ? "fill-red-400 text-red-400"
                           : "text-gray-400"
                       }`}
                     />
                   </button>
 
-                  {charity.imageUrl ? (
+                  {charity.image_url ? (
                     <img
-                      src={charity.imageUrl}
+                      src={charity.image_url}
                       alt={charity.name}
                       className="w-full h-48 object-cover rounded-lg"
                     />
@@ -279,21 +270,21 @@ export default function SearchCharities() {
                     onClick={(e) => toggleFavorite(e, charity)}
                     className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white transition-colors z-10"
                   >
-                    <Star
+                    <Heart
                       size={20}
                       className={`transition-colors ${
                         favorites.some(
                           (fav) => fav.every_id === charity.every_id
                         )
-                          ? "fill-yellow-400 text-yellow-400"
+                          ? "fill-red-400 text-red-400"
                           : "text-gray-400"
                       }`}
                     />
                   </button>
 
-                  {charity.imageUrl ? (
+                  {charity.image_url ? (
                     <img
-                      src={charity.imageUrl}
+                      src={charity.image_url}
                       alt={charity.name}
                       className="w-full h-48 object-cover"
                     />
@@ -347,9 +338,9 @@ export default function SearchCharities() {
                       </button>
                     </div>
 
-                    {selectedCharity.imageUrl ? (
+                    {selectedCharity.image_url ? (
                       <img
-                        src={selectedCharity.imageUrl}
+                        src={selectedCharity.image_url}
                         alt={selectedCharity.name}
                         className="w-full h-64 object-cover rounded-lg mb-4"
                       />
@@ -377,16 +368,16 @@ export default function SearchCharities() {
 
                       <button
                         onClick={(e) => toggleFavorite(e, selectedCharity)}
-                        className="inline-flex items-center px-4 py-2 border-2 border-yellow-400 rounded-md hover:bg-yellow-50 transition-colors"
+                        className="inline-flex items-center px-4 py-2 border-2 border-red-400 rounded-md hover:bg-red-50 transition-colors"
                       >
-                        <Star
+                        <Heart
                           size={16}
                           className={`mr-2 transition-colors ${
                             favorites.some(
                               (fav) => fav.every_id === selectedCharity.every_id
                             )
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "text-yellow-400"
+                              ? "fill-red-400 text-red-400"
+                              : "text-red-400"
                           }`}
                         />
                         {favorites.some(

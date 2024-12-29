@@ -9,28 +9,14 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
 import { useUser } from "@clerk/clerk-react";
-
-interface Charity {
-  _id: string;
-  every_id: string;
-  name: string;
-  description: string;
-  image_url: string;
-  category: string;
-  website: string;
-  isFavorite?: boolean;
-}
-
-interface CharityWithNote extends Charity {
-  note?: string;
-}
+import Charity from "../interfaces/Charity";
 
 export default function FavoriteCharities() {
   const { user } = useUser();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [favorites, setFavorites] = useState<CharityWithNote[]>([]);
+  const [favorites, setFavorites] = useState<Charity[]>([]);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -194,7 +180,7 @@ export default function FavoriteCharities() {
                         {charity.description}
                       </p>
 
-                      {editingNoteId === charity.every_id ? (
+                      {editingNoteId === charity._id ? (
                         <div className="mb-4">
                           <textarea
                             className="w-full p-3 border rounded-md"
@@ -202,7 +188,7 @@ export default function FavoriteCharities() {
                             defaultValue={charity.note}
                             rows={3}
                             onBlur={(e) =>
-                              handleUpdateNote(charity.every_id, e.target.value)
+                              handleUpdateNote(charity._id, e.target.value)
                             }
                           />
                         </div>
@@ -218,7 +204,7 @@ export default function FavoriteCharities() {
 
                       <div className="flex flex-col sm:flex-row gap-3">
                         <button
-                          onClick={() => setEditingNoteId(charity.every_id)}
+                          onClick={() => setEditingNoteId(charity._id)}
                           className="inline-flex items-center justify-center px-4 py-2 text-sm border border-gray-200 rounded-md hover:bg-gray-50"
                         >
                           <PenSquare size={16} className="mr-2" />
