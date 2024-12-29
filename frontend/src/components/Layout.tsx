@@ -101,7 +101,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
                 },
                 {
                   icon: Search,
-                  name: "Search Charities",
+                  name: "Explore Charities",
                   href: "/search-charities",
                 },
                 {

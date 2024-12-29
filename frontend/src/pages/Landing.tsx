@@ -1,4 +1,4 @@
-import { SignUpButton } from "@clerk/clerk-react";
+import { SignInButton, SignUpButton } from "@clerk/clerk-react";
 
 import { Gift, Heart, Share2, ArrowRight } from "lucide-react";
 
@@ -10,7 +10,7 @@ export default function Landing() {
           <nav className="flex justify-between items-center mb-16">
             <div className="text-xl font-bold">GiveInstead</div>
             <div className="sm:px-6 py-2 text-green-800 hover:bg-green-100 rounded-full transition-colors">
-              <SignUpButton />
+              <SignInButton />
             </div>
           </nav>
           <div className="text-center md:py-20">

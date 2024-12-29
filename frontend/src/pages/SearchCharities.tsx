@@ -162,7 +162,7 @@ export default function SearchCharities() {
   return (
     <Layout>
       <main className="flex-1 p-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <div className="relative">
               <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />

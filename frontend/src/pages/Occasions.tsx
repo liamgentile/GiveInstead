@@ -1,11 +1,4 @@
-import {
-  Search,
-  Heart,
-  Trash2,
-  PenSquare,
-  Gift,
-  Calendar,
-} from "lucide-react";
+import { Search, Heart, Trash2, PenSquare, Gift, Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -17,25 +10,7 @@ import { useUser } from "@clerk/clerk-react";
 import CharityCard from "../components/CharityCard";
 import Charity from "../interfaces/Charity";
 import Occasion from "../interfaces/Occasion";
-
-const occasionSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
-  type: z.enum(["fundraiser", "awareness", "volunteer"]),
-  startDate: z.date(),
-  endDate: z.date(),
-  charities: z.array(
-    z.object({
-      charity: z.object({
-        _id: z.string(),
-        name: z.string(),
-        description: z.string(),
-      }),
-      goal: z.number().min(0),
-      description: z.string(),
-    })
-  ),
-});
+import { occasionSchema } from "../schemas/occasionSchema";
 
 export default function Occasions() {
   const { user } = useUser();
@@ -62,7 +37,7 @@ export default function Occasions() {
     defaultValues: {
       name: "",
       description: "",
-      type: "fundraiser",
+      type: "birthday",
       charities: [],
     },
   });
@@ -108,7 +83,7 @@ export default function Occasions() {
 
         const fetchedCharities: Charity[] = data.nonprofits.map(
           (charity: any) => ({
-            _id: '',
+            _id: "",
             every_id: charity.ein,
             name: charity.name,
             description: charity.description,
@@ -214,9 +189,10 @@ export default function Occasions() {
                         {...form.register("type")}
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
                       >
-                        <option value="fundraiser">Fundraiser</option>
-                        <option value="awareness">Awareness</option>
-                        <option value="volunteer">Volunteer</option>
+                        <option value="birthday">Birthday</option>
+                        <option value="christmas">Christmas</option>
+                        <option value="hanukkah">Hanukkah</option>
+                        <option value="other">Other</option>
                       </select>
 
                       <div className="grid grid-cols-2 gap-4">
@@ -263,78 +239,84 @@ export default function Occasions() {
                         />
                       </div>
 
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          initial={{
-                            opacity: 0,
-                          }}
-                          animate={{
-                            opacity: 1,
-                          }}
-                          exit={{
-                            opacity: 0,
-                          }}
-                          className="space-y-8"
-                        >
-                          {!isLoading && !error && (
-                            <motion.div layout className="space-y-4">
-                              <div className="grid gap-3">
-                                {charities.map((charity) => (
-                                  <CharityCard
-                                    key={charity._id}
-                                    charity={charity}
-                                    onSelect={() => {
-                                      if (
-                                        !selectedCharities.find(
-                                          (c) => c._id === charity._id
-                                        )
-                                      ) {
-                                        setSelectedCharities((prev) => [
-                                          ...prev,
-                                          charity,
-                                        ]);
-                                      }
-                                    }}
-                                    isSelected={selectedCharities.some(
-                                      (c) => c._id === charity._id
-                                    )}
-                                  />
-                                ))}
-                              </div>
-                            </motion.div>
-                          )}
+                      {isLoading && (
+                        <div className="text-center py-12">
+                          <motion.div
+                            animate={{
+                              rotate: 360,
+                            }}
+                            transition={{
+                              duration: 1,
+                              repeat: Infinity,
+                              ease: "linear",
+                            }}
+                            className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full mx-auto"
+                          />
+                        </div>
+                      )}
 
-                          <motion.div layout className="space-y-4">
-                            <h3 className="font-medium text-gray-900 flex items-center gap-2">
-                              <Heart size={16} className="text-red-500" />
-                              Favorite Charities
-                            </h3>
-                            <div className="grid gap-3">
-                              {favorites.map((charity) => (
-                                <CharityCard
-                                  key={charity._id}
-                                  charity={charity}
-                                  onSelect={() => {
-                                    if (
-                                      !selectedCharities.find(
-                                        (c) => c._id === charity._id
-                                      )
-                                    ) {
-                                      setSelectedCharities((prev) => [
-                                        ...prev,
-                                        charity,
-                                      ]);
-                                    }
-                                  }}
-                                  isSelected={selectedCharities.some(
-                                    (c) => c._id === charity._id
-                                  )}
-                                />
-                              ))}
-                            </div>
-                          </motion.div>
+                      {error && (
+                        <div className="text-center py-12 text-red-500">
+                          {error}
+                        </div>
+                      )}
+                      {!isLoading && !error && (
+                        <motion.div layout className="space-y-4">
+                          <div className="grid gap-3">
+                            {charities.map((charity) => (
+                              <CharityCard
+                                key={charity._id}
+                                charity={charity}
+                                onSelect={() => {
+                                  if (
+                                    !selectedCharities.find(
+                                      (c) => c._id === charity._id
+                                    )
+                                  ) {
+                                    setSelectedCharities((prev) => [
+                                      ...prev,
+                                      charity,
+                                    ]);
+                                  }
+                                }}
+                                isSelected={selectedCharities.some(
+                                  (c) => c._id === charity._id
+                                )}
+                              />
+                            ))}
+                          </div>
                         </motion.div>
-                      </AnimatePresence>
+                      )}
+
+                      <motion.div layout className="space-y-4">
+                        <h3 className="font-medium text-gray-900 flex items-center gap-2">
+                          <Heart size={16} className="text-red-500" />
+                          Favorite Charities
+                        </h3>
+                        <div className="grid gap-3">
+                          {favorites.map((charity) => (
+                            <CharityCard
+                              key={charity._id}
+                              charity={charity}
+                              onSelect={() => {
+                                if (
+                                  !selectedCharities.find(
+                                    (c) => c._id === charity._id
+                                  )
+                                ) {
+                                  setSelectedCharities((prev) => [
+                                    ...prev,
+                                    charity,
+                                  ]);
+                                }
+                              }}
+                              isSelected={selectedCharities.some(
+                                (c) => c._id === charity._id
+                              )}
+                            />
+                          ))}
+                        </div>
+                      </motion.div>
                     </div>
 
                     <div className="flex justify-end gap-4 pt-6">
@@ -359,8 +341,8 @@ export default function Occasions() {
 
             {occasions.length > 0 && !showForm && (
               <motion.div layout className="grid gap-6">
-                <h1 className="text-l font-semibold px-3 py-4 mb-4">
-                  Your Favorite Charities
+                <h1 className="text-l font-semibold px-3 py-4">
+                  Occasions
                 </h1>
                 {occasions.map((occasion) => (
                   <motion.div

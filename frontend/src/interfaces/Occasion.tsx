@@ -4,7 +4,7 @@ export default interface Occasion {
     id: string;
     name: string;
     description: string;
-    type: "fundraiser" | "awareness" | "volunteer";
+    type: "birthday" | "christmas" | "hanukkah" | "other";
     startDate: Date;
     endDate: Date;
     charities: {

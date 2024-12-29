@@ -98,7 +98,7 @@ export default function FavoriteCharities() {
   return (
     <Layout>
       <main className="flex-1 p-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-l font-semibold px-3 py-4 mb-6">
             Your Favorite Charities
           </h1>
