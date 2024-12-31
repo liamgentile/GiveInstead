@@ -9,6 +9,9 @@ export class FavouriteCharity {
   every_id: string;
 
   @Prop({ required: true })
+  every_slug: string;
+
+  @Prop({ required: true })
   clerk_user_id: string;
 
   @Prop()

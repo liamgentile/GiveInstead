@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { OccasionController } from '../controllers/occasions.controller';
 import {
     Occasion,
     OccasionSchema,
 } from '../schemas/occasion.schema';
+import { OccasionService } from '../services/occasions.service';
 
 @Module({
   imports: [
@@ -11,7 +13,7 @@ import {
       { name: Occasion.name, schema: OccasionSchema },
     ]),
   ],
-  controllers: [],
-  providers: [],
+  controllers: [OccasionController],
+  providers: [OccasionService],
 })
-export class FavouriteCharitiesModule {}
+export class OccasionsModule {}

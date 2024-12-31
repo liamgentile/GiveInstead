@@ -16,15 +16,10 @@ export class FavouriteCharitiesService {
     createFavouriteCharityDto: CreateFavouriteCharityDto,
   ): Promise<FavouriteCharity> {
     try {
-      console.log(
-        'Creating favourite charity with data:',
-        createFavouriteCharityDto,
-      );
       const createdFavouriteCharity = new this.favouriteCharityModel(
         createFavouriteCharityDto,
       );
       const saved = await createdFavouriteCharity.save();
-      console.log('Saved favourite charity:', saved);
       return saved;
     } catch (error) {
       console.error('Error creating favourite charity:', error);
@@ -35,13 +30,12 @@ export class FavouriteCharitiesService {
   async updateNote(
     updateFavouriteCharityNoteDto: UpdateFavouriteCharityNoteDto,
   ): Promise<FavouriteCharity> {
-    const { every_id, clerk_user_id, note } = updateFavouriteCharityNoteDto;
+    const { _id, note } = updateFavouriteCharityNoteDto;
 
-    // Find the charity by charityId and userId and update the note
     const updatedCharity = await this.favouriteCharityModel.findOneAndUpdate(
-      { every_id, clerk_user_id },  // Both charityId and userId in the query
-      { $set: { note } },           // Update the note field
-      { new: true },                // Return the updated charity
+      { _id },
+      { $set: { note } },    
+      { new: true },
     );
 
     if (!updatedCharity) {

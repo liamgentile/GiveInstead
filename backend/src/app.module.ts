@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { FavouriteCharitiesModule } from './favourite-charities/modules/favouriteCharities.module';
 import { AppService } from './app.service';
+import { OccasionsModule } from './occasions/modules/occasions.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { AppService } from './app.service';
         uri: config.get<string>('MONGO_DB_URI'), 
       })
     }),
-    FavouriteCharitiesModule
+    FavouriteCharitiesModule,
+    OccasionsModule,
   ],
   controllers: [AppController],
   providers: [AppService]
