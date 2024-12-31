@@ -44,7 +44,7 @@ export default function Landing() {
               Choose Your Charities
             </h3>
             <p className="text-gray-600">
-              Select from thousands of charitable organizations
+              Select from thousands of charitable organizations compiled by Every.org 
             </p>
           </div>
 

@@ -23,9 +23,34 @@ export default function App() {
             </>
           }
         />
-        <Route path="/user-profile" element={<UserProfile />}></Route>
-        <Route path="/search-charities" element={<SearchCharities />}></Route>
-        <Route path="/favourite-charities" element={<FavoriteCharities />}></Route>
+        <Route
+          path="/user-profile"
+          element={
+            <SignedIn>
+              <UserProfile />
+            </SignedIn>
+          }
+        />
+        <Route
+          path="/search-charities"
+          element={
+            <><SignedIn>
+              <SearchCharities />
+            </SignedIn><SignedOut>
+                <Landing />
+              </SignedOut></>
+          }
+        />
+        <Route
+          path="/favourite-charities"
+          element={
+            <><SignedIn>
+              <FavoriteCharities />
+            </SignedIn><SignedOut>
+                <Landing />
+              </SignedOut></>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

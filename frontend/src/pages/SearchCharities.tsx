@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
 import { useUser } from "@clerk/clerk-react";
 import Charity from "../interfaces/Charity";
+import { featuredCharities } from "../constants/featuredCharities";
+import { fetchCharities } from "../utils/fetchCharities";
+import { addFavorite, removeFavorite } from "../utils/updateFavouriteCharities";
 
 export default function SearchCharities() {
   const { user } = useUser();
@@ -28,7 +31,7 @@ export default function SearchCharities() {
           throw new Error("Failed to fetch favorite charities");
         }
         const data = await response.json();
-        setFavorites(data); 
+        setFavorites(data);
       } catch (err) {
         console.error(err);
         setError("Could not load favorite charities.");
@@ -42,30 +45,11 @@ export default function SearchCharities() {
 
   useEffect(() => {
     const searchCharities = async () => {
-      if (!searchTerm) {
-        setCharities([]);
-        return;
-      }
       setIsLoading(true);
       setError(null);
+
       try {
-        const everydotorgAPIKey = import.meta.env.VITE_EVERY_CHARITY_KEY;
-        const response = await fetch(
-          `https://partners.every.org/v0.2/search/${searchTerm}?apiKey=${everydotorgAPIKey}`
-        );
-        const data = await response.json();
-
-        const fetchedCharities: Charity[] = data.nonprofits.map(
-          (charity: any) => ({
-            _id: null,
-            every_id: charity.ein,
-            name: charity.name,
-            description: charity.description,
-            image_url: charity.coverImageUrl,
-            website: charity.websiteUrl,
-          })
-        );
-
+        const fetchedCharities = await fetchCharities(searchTerm);
         setCharities(fetchedCharities);
       } catch (err) {
         setError("Failed to fetch charities. Please try again.");
@@ -74,84 +58,41 @@ export default function SearchCharities() {
       }
     };
 
+    if (searchTerm) {
+      searchCharities();
+    } else {
+      setCharities([]);
+    }
+
     const debounce = setTimeout(searchCharities, 500);
     return () => clearTimeout(debounce);
   }, [searchTerm]);
 
-  const featuredCharities: Charity[] = [
-    {
-      _id: '',
-      every_id: "822281466",
-      name: "Wild Animal Initiative",
-      description:
-        "We are dedicated to finding evidence-backed ways to improve the lives of animals in the wild.  We depend on individual donors to help us make life better for wild animals. To a small nonprofit working hard on a big problem, your support is more crucial now than ever!",
-      image_url:
-        "https://res.cloudinary.com/everydotorg/image/upload/f_auto,c_limit,w_1920,q_auto/profile_pics/ap5t5cjcylr7xktnldno",
-      website: "https://wildanimalinitiative.org",
-    },
-    {
-      _id: '',
-      every_id: "873020380",
-      name: "Aquatic Life Institute",
-      description:
-        "Aquatic Life Institute was formed to specifically advance animal welfare for the nearly 500 billion farmed fish and shrimp, and 2-3 trillion wild aquatic animals in the global food system.",
-      image_url:
-        "https://res.cloudinary.com/everydotorg/image/upload/f_auto,c_limit,w_1920,q_auto/profile_pics/kbfxjmzl39rlrs4nxnp3",
-      website: "https://ali.fish",
-    },
-    {
-      _id: '',
-      every_id: "510292919",
-      name: "Farm Sanctuary",
-      description:
-        "Farm Sanctuary fights the disastrous effects of animal agriculture on animals, the environment, social justice, and public health through rescue, education, and advocacy.",
-      image_url:
-        "https://assets.farmsanctuary.org/content/uploads/2024/12/06092318/2024_09_13_FSAC_Grace_and_Jodean_Pigs_DM_4638-scaled-e1733495282772-1600x911.jpg",
-      website: "https://farmsanctuary.org/",
-    },
-  ];
-
   const toggleFavorite = async (e: React.MouseEvent, charity: Charity) => {
     e.stopPropagation();
-    const isFavorited = favorites.some((fav) => fav.every_id === charity.every_id);
-  
+    const isFavorited = favorites.some(
+      (fav) => fav.every_id === charity.every_id
+    );
+
     try {
       if (isFavorited) {
-        const charityToDelete = favorites.find((fav) => fav.every_id === charity.every_id);
-        
-        const response = await fetch(`http://localhost:3000/favourite-charity/${charityToDelete?._id}`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        });
-  
-        if (!response.ok) throw new Error("Failed to unfavorite charity");
-  
-        setFavorites((prev) => prev.filter((fav) => fav.every_id !== charity.every_id));
-      } else {
-        const createDto = {
-          every_id: charity.every_id,
-          clerk_user_id: user?.id,
-          name: charity.name,
-          website: charity.website,
-          description: charity.description,
-          image_url: charity.image_url,
-        };
-  
-        const response = await fetch("http://localhost:3000/favourite-charity", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(createDto),
-        });
-  
-        if (!response.ok) throw new Error("Failed to favorite charity");
-  
-        const createdCharity = await response.json(); 
-        setFavorites((prev) => [
-          ...prev,
-          createdCharity,  
-        ]);
+        const charityToDelete = favorites.find(
+          (fav) => fav.every_id === charity.every_id
+        );
 
-        console.log(favorites);
+        if (charityToDelete) {
+          await removeFavorite(charityToDelete._id);
+          setFavorites((prev) =>
+            prev.filter((fav) => fav.every_id !== charity.every_id)
+          );
+        }
+      } else {
+        if (user?.id) {
+          const createdCharity = await addFavorite(charity, user.id);
+          setFavorites((prev) => [...prev, createdCharity]);
+        } else {
+          setError("User is not authenticated.");
+        }
       }
     } catch (err) {
       console.error(err);
@@ -161,8 +102,6 @@ export default function SearchCharities() {
 
   return (
     <Layout>
-      <main className="flex-1 p-6 bg-gray-50">
-        <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <div className="relative">
               <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
@@ -232,7 +171,7 @@ export default function SearchCharities() {
                     />
                   ) : (
                     <HeartHandshake
-                      size={48} 
+                      size={48}
                       className="w-full h-48 text-gray-400 mx-auto"
                     />
                   )}
@@ -392,8 +331,6 @@ export default function SearchCharities() {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-      </main>
     </Layout>
   );
 }

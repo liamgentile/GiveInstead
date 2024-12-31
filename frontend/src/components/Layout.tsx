@@ -32,19 +32,21 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
   }, [isSidebarOpen]);
 
   if (!isLoaded) {
-    return <div className="text-center py-12">
-      <motion.div
-        animate={{
-          rotate: 360,
-        }}
-        transition={{
-          duration: 1,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full mx-auto"
-      />
-    </div>
+    return (
+      <div className="text-center py-12">
+        <motion.div
+          animate={{
+            rotate: 360,
+          }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+          className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full mx-auto"
+        />
+      </div>
+    );
   }
 
   return (
@@ -137,7 +139,9 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
           </div>
         </aside>
         <div className={`flex-1 ${isSidebarOpen ? "overflow-hidden" : ""}`}>
-          {children}
+          <main className="flex-1 p-6 bg-gray-50">
+            <div className="max-w-4xl mx-auto">{children}</div>
+          </main>
         </div>
       </div>
     </div>
