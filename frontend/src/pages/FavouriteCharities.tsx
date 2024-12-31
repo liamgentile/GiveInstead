@@ -70,7 +70,7 @@ export default function FavoriteCharities() {
 
   return (
     <Layout>
-      <h1 className="text-l font-semibold px-3 py-4 mb-6">
+      <h1 className="text-2xl font-semibold px-3 py-4 mb-6">
         Your Favorite Charities
       </h1>
 
