@@ -6,6 +6,7 @@ export const fetchFavorites = async (userId: string | undefined) => {
     const favouriteCharityAPIURL = import.meta.env.VITE_FAVOURITE_CHARITY_API_URL;
   
     const response = await fetch(`${favouriteCharityAPIURL}${userId}`);
+    
     if (!response.ok) {
       throw new Error("Failed to fetch favorites");
     }
