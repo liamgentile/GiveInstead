@@ -7,5 +7,6 @@ export class CreateOccasionDto {
   type: string;
   start: Date;
   end: Date;
+  url: string;
   charities: Charity[];
 }

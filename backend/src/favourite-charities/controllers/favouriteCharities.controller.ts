@@ -19,11 +19,6 @@ export class FavouriteCharityController {
     return this.favouriteCharitiesService.updateNote(UpdateFavouriteCharityNoteDto);
   }
 
-  @Get()
-  async findAll() {
-    return this.favouriteCharitiesService.findAll();
-  }
-
   @Get('user/:clerkUserId')
   async findByUser(@Param('clerkUserId') clerkUserId: string) {
     console.log(`Received userId: ${clerkUserId}`)

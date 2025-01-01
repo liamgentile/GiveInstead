@@ -66,6 +66,9 @@ export class Occasion {
   @Prop({ required: true })
   end: Date;
 
+  @Prop({ required: true })
+  url: string;
+
   @Prop([CharitySchema])
   charities: Charity[];
 }

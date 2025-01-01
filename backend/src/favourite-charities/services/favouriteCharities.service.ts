@@ -55,10 +55,6 @@ export class FavouriteCharitiesService {
     return favouriteCharity;
   }
 
-  async findAll(): Promise<FavouriteCharity[]> {
-    return this.favouriteCharityModel.find().exec();
-  }
-
   async findByUser(clerk_user_id: string) {
     return this.favouriteCharityModel.find({ clerk_user_id });
   }

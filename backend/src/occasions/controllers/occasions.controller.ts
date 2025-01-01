@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateOccasionDto } from '../dto/createOccasion.dto';
 import { UpdateOccasionDto } from '../dto/updateOccasion.dto';
 import { OccasionService } from '../services/occasions.service';
@@ -27,7 +36,16 @@ export class OccasionController {
 
   @Get(':clerkUserId')
   async findByUser(@Param('clerkUserId') clerkUserId: string) {
-    console.log(`Received userId: ${clerkUserId}`)
     return this.occasionService.findByUser(clerkUserId);
+  }
+
+  @Get('url/:url')
+  async findByUrl(@Param('url') url: string) {
+    console.log(url);
+    const occasion = await this.occasionService.findByUrl(url);
+    if (!occasion) {
+      throw new NotFoundException(`Occasion with URL ${url} not found`);
+    }
+    return occasion;
   }
 }

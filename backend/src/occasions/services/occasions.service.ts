@@ -20,6 +20,13 @@ export class OccasionService {
     return this.occasionModel.find({ clerk_user_id });
   }
 
+  async findByUrl(url: string) {
+    console.log("Searching for occasion with URL:", url);
+    const result = await this.occasionModel.findOne({ url });
+    console.log("Query result:", result);
+    return result;
+  }
+
   async updateOccasion(_id: string, updateOccasionDto: UpdateOccasionDto): Promise<Occasion> {
     const updatedOccasion = await this.occasionModel.findByIdAndUpdate(_id, updateOccasionDto, {
       new: true,
