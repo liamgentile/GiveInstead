@@ -8,7 +8,10 @@ export default function Landing() {
       <header className="relative bg-white py-12 px-6 sm:px-8 lg:px-16">
         <div className="mx-auto max-w-7xl">
           <nav className="flex justify-between items-center mb-16">
-            <div className="text-xl font-bold">GiveInstead</div>
+            <div className="flex space-x-2 text-center">
+              <Gift className="h-6 w-6 text-green-600 my-auto" />
+              <div className="text-xl font-bold">GiveInstead</div>
+            </div>
             <div className="sm:px-6 py-2 text-green-800 hover:bg-green-100 rounded-full transition-colors">
               <SignInButton />
             </div>
@@ -44,7 +47,8 @@ export default function Landing() {
               Choose Your Charities
             </h3>
             <p className="text-gray-600">
-              Select from thousands of charitable organizations compiled by Every.org 
+              Select from thousands of charitable organizations compiled by
+              Every.org
             </p>
           </div>
 

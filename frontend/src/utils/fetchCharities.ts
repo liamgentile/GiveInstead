@@ -22,7 +22,7 @@ export const fetchCharities = async (searchTerm: string): Promise<Charity[]> => 
       every_slug: charity.slug,
       name: charity.name,
       description: charity.description,
-      imageUrl: charity.coverImageUrl,
+      image_url: charity.coverImageUrl,
       website: charity.websiteUrl,
     }));
   };
