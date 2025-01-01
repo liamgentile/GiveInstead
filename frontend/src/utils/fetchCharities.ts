@@ -23,5 +23,6 @@ export const fetchCharities = async (searchTerm: string): Promise<Charity[]> => 
       name: charity.name,
       description: charity.description,
       imageUrl: charity.coverImageUrl,
+      website: charity.websiteUrl,
     }));
   };

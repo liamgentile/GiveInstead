@@ -59,21 +59,9 @@ export default function Statistics() {
 
   return (
     <Layout>
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 20,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        className="max-w-4xl mx-auto space-y-8"
-      >
+      <div className="space-y-8">
         <h1 className="text-2xl font-semibold px-3 py-4 mb-6">Statistics</h1>
-
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {/* Lifetime Amount Raised */}
           <motion.div
             initial={{
               opacity: 0,
@@ -111,8 +99,6 @@ export default function Statistics() {
               )}
             </div>
           </motion.div>
-
-          {/* Top Performing Charity */}
           <motion.div
             initial={{
               opacity: 0,
@@ -131,7 +117,7 @@ export default function Statistics() {
             <div className="relative">
               <div className="flex items-center space-x-2 text-green-600 mb-4">
                 <Trophy className="h-5 w-5" />
-                <h3 className="font-medium">Top Performing Charity</h3>
+                <h3 className="font-medium">Top Receiving Charity</h3>
               </div>
               {isLoading ? (
                 <div className="space-y-2">
@@ -147,8 +133,8 @@ export default function Statistics() {
                     opacity: 1,
                   }}
                 >
-                  <p className="text-xl font-semibold text-gray-900 mb-1">
-                    No Charities supported yet
+                  <p className="text-l font-semibold text-gray-900 mb-1">
+                    no charities supported yet
                   </p>
                 </motion.div>
               ) : (
@@ -173,8 +159,6 @@ export default function Statistics() {
               )}
             </div>
           </motion.div>
-
-          {/* Most Successful Occasion */}
           <motion.div
             initial={{
               opacity: 0,
@@ -209,8 +193,8 @@ export default function Statistics() {
                     opacity: 1,
                   }}
                 >
-                  <p className="text-xl font-semibold text-gray-900 mb-1">
-                    No occasions funded yet
+                  <p className="text-l font-semibold text-gray-900 mb-1">
+                    no occasions funded yet
                   </p>
                 </motion.div>
               ) : (
@@ -237,7 +221,7 @@ export default function Statistics() {
             </div>
           </motion.div>
         </div>
-      </motion.div>
+      </div>
     </Layout>
   );
 }

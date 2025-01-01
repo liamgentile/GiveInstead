@@ -44,29 +44,31 @@ export default function SearchCharities() {
   }, [user?.id]);
 
   useEffect(() => {
-    const searchCharities = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const fetchedCharities = await fetchCharities(searchTerm);
-        setCharities(fetchedCharities);
-      } catch (err) {
-        setError("Failed to fetch charities. Please try again.");
-      } finally {
-        setIsLoading(false);
+    const debounce = setTimeout(() => {
+      if (searchTerm) {
+        const searchCharities = async () => {
+          setIsLoading(true);
+          setError(null);
+  
+          try {
+            const fetchedCharities = await fetchCharities(searchTerm);
+            setCharities(fetchedCharities);
+          } catch (err) {
+            setError("Failed to fetch charities. Please try again.");
+          } finally {
+            setIsLoading(false);
+          }
+        };
+  
+        searchCharities();
+      } else {
+        setCharities([]);
       }
-    };
-
-    if (searchTerm) {
-      searchCharities();
-    } else {
-      setCharities([]);
-    }
-
-    const debounce = setTimeout(searchCharities, 500);
+    }, 500); 
+  
     return () => clearTimeout(debounce);
   }, [searchTerm]);
+  
 
   const toggleFavorite = async (e: React.MouseEvent, charity: Charity) => {
     e.stopPropagation();

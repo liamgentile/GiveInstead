@@ -142,7 +142,19 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
         </aside>
         <div className={`flex-1 ${isSidebarOpen ? "overflow-hidden" : ""}`}>
           <main className="flex-1 p-6 bg-gray-50">
-            <div className="max-w-4xl mx-auto">{children}</div>
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              className="max-w-4xl mx-auto"
+            >
+              {children}
+            </motion.div>
           </main>
         </div>
       </div>
