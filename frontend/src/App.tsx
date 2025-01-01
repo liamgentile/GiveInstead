@@ -5,6 +5,8 @@ import UserProfile from "./pages/UserProfile";
 import Occasions from "./pages/Occasions";
 import SearchCharities from "./pages/SearchCharities";
 import FavoriteCharities from "./pages/FavouriteCharities";
+import PublicOccasion from "./pages/PublicOccasion";
+import Statistics from "./pages/Stastistics";
 
 export default function App() {
   return (
@@ -32,6 +34,16 @@ export default function App() {
           }
         />
         <Route
+          path="/statistics"
+          element={
+            <><SignedIn>
+              <Statistics />
+            </SignedIn><SignedOut>
+                <Landing />
+              </SignedOut></>
+          }
+        />
+        <Route
           path="/search-charities"
           element={
             <><SignedIn>
@@ -50,6 +62,10 @@ export default function App() {
                 <Landing />
               </SignedOut></>
           }
+        />
+        <Route
+          path="/occasions/:url"
+          element={<PublicOccasion />}
         />
       </Routes>
     </BrowserRouter>

@@ -15,4 +15,5 @@ export const occasionSchema = z.object({
         }),
       })
     ),
+    url: z.string().optional()
   });

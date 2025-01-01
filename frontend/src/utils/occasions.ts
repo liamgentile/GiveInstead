@@ -7,9 +7,10 @@ export const fetchOccasions = async (userId: string | undefined) => {
 };
 
 export const createOrUpdateOccasion = async (
-  occasionData: any,
+  occasionData: Object,
   editingOccasion: any
 ) => {
+  console.log('Request Data:', occasionData);
   const url = editingOccasion
     ? `http://localhost:3000/occasions/${editingOccasion._id}`
     : "http://localhost:3000/occasions";

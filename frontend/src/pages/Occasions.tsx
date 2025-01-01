@@ -1,4 +1,4 @@
-import { Search, Heart, Trash2, PenSquare, Gift, Calendar } from "lucide-react";
+import { Search, Heart, Trash2, PenSquare, Gift, Calendar, Link } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Layout from "../components/Layout";
-import { useUser } from "@clerk/clerk-react";
 import CharityCard from "../components/CharityCard";
 import Charity from "../interfaces/Charity";
 import Occasion from "../interfaces/Occasion";
@@ -14,6 +13,8 @@ import { occasionSchema } from "../schemas/occasionSchema";
 import { fetchFavorites } from "../utils/fetchFavorites";
 import { fetchCharities } from "../utils/fetchCharities";
 import { createOrUpdateOccasion, deleteOccasion, fetchOccasions } from "../utils/occasions";
+import { v4 as uuidv4 } from 'uuid';
+import { useUser } from "@clerk/clerk-react";
 
 export default function Occasions() {
   const { user } = useUser();
@@ -37,6 +38,7 @@ export default function Occasions() {
         type: data.type,
         start: data.start,
         end: data.end,
+        url: editingOccasion ? editingOccasion.url : uuidv4(),
         charities: selectedCharities.map((charity: any) => ({
           every_id: charity.ein || charity.every_id,
           every_slug: charity.slug || charity.every_slug,
@@ -52,7 +54,7 @@ export default function Occasions() {
       if (editingOccasion) {
         setOccasions((prevOccasions) =>
           prevOccasions.map((o) =>
-            o.id === editingOccasion.id ? { ...o, ...savedOccasion } : o
+            o._id === editingOccasion._id ? { ...o, ...savedOccasion } : o
           )
         );
       } else {
@@ -60,6 +62,7 @@ export default function Occasions() {
       }
 
       setEditingOccasion(null);
+      setSearchTerm("");
       form.reset();
       setShowForm(false);
     } catch (err) {
@@ -297,19 +300,16 @@ export default function Occasions() {
                     <div className="grid gap-3">
                       {charities.map((charity) => (
                         <CharityCard
-                          key={charity._id}
+                          key={charity.every_id}
                           charity={charity}
                           onSelect={() => {
-                            if (
-                              !selectedCharities.find(
-                                (c) => c.every_id === charity.every_id
-                              )
-                            ) {
-                              setSelectedCharities((prev) => [
-                                ...prev,
-                                charity,
-                              ]);
-                            }
+                            setSelectedCharities((prev) => {
+                              if (prev.find((c) => c.every_id === charity.every_id)) {
+                                return prev.filter((c) => c.every_id !== charity.every_id);
+                              } else {
+                                return [...prev, charity];
+                              }
+                            });
                           }}
                           isSelected={selectedCharities.some(
                             (c) => c.every_id === charity.every_id
@@ -328,16 +328,16 @@ export default function Occasions() {
                   <div className="grid gap-3">
                     {favorites.map((charity) => (
                       <CharityCard
-                        key={charity._id}
+                        key={charity.every_id}
                         charity={charity}
                         onSelect={() => {
-                          if (
-                            !selectedCharities.find(
-                              (c) => c.every_id === charity.every_id
-                            )
-                          ) {
-                            setSelectedCharities((prev) => [...prev, charity]);
-                          }
+                          setSelectedCharities((prev) => {
+                            if (prev.find((c) => c.every_id === charity.every_id)) {
+                              return prev.filter((c) => c.every_id !== charity.every_id);
+                            } else {
+                              return [...prev, charity];
+                            }
+                          });
                         }}
                         isSelected={selectedCharities.some(
                           (c) => c.every_id === charity.every_id
@@ -402,6 +402,19 @@ export default function Occasions() {
                   </div>
                 </div>
                 <div className="flex space-x-2">
+                <motion.button
+                    whileHover={{
+                      scale: 1.05,
+                    }}
+                    whileTap={{
+                      scale: 0.95,
+                    }}
+                    className="p-2 text-gray-600 hover:text-gray-600 hover:bg-gray-50 rounded-full transition-colors"
+                  >
+                    <a href={ 'occasions/' + occasion.url } target="_blank">
+                    <Link size={20} />
+                    </a>
+                  </motion.button>
                   <motion.button
                     whileHover={{
                       scale: 1.05,

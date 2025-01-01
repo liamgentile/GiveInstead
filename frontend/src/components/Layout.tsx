@@ -7,6 +7,7 @@ import {
   Menu,
   X,
   LogOut,
+  Gift,
 } from "lucide-react";
 
 import { useState, useEffect } from "react";
@@ -14,7 +15,7 @@ import { useClerk, useUser } from "@clerk/clerk-react";
 import { motion } from "framer-motion";
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
-  const { user, isLoaded } = useUser();
+  const { isLoaded } = useUser();
   const { signOut } = useClerk();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -52,9 +53,10 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm px-6 py-4 flex items-center justify-between lg:hidden">
-        <h1 className="text-xl font-semibold text-gray-900">
-          Welcome back, {user?.firstName}
-        </h1>
+        <div className="flex space-x-2 text-center">
+          <Gift className="h-6 w-6 text-green-600 my-auto" />
+          <h2 className="text-xl font-bold text-gray-900">GiveInstead</h2>
+        </div>
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="p-2 rounded-md hover:bg-gray-100"
@@ -80,15 +82,15 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
               <X size={24} className="text-gray-600" />
             </button>
 
-            <div className="px-3 py-4 mb-6 hidden lg:block">
-              <h2 className="text-xl font-bold text-gray-900">
-                Welcome back, {user?.firstName}
-              </h2>
+            <div className="px-3 py-4 mb-6 hidden lg:flex space-x-2 text-center">
+              <Gift className="h-6 w-6 text-green-600 my-auto" />
+              <h2 className="text-xl font-bold text-gray-900">GiveInstead</h2>
             </div>
 
             <nav className="space-y-1">
-              <div className="text-xl font-bold pt-2 pb-6 px-3 block lg:hidden">
-                GiveInstead
+              <div className="text-xl font-bold pt-2 pb-6 px-3 flex space-x-2 lg:hidden">
+                <Gift className="h-6 w-6 text-green-600 my-auto" />
+                <h2 className="text-xl font-bold text-gray-900">GiveInstead</h2>
               </div>
               {[
                 {
@@ -99,7 +101,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
                 {
                   icon: PieChart,
                   name: "Stats",
-                  href: "#",
+                  href: "/statistics",
                 },
                 {
                   icon: Search,
