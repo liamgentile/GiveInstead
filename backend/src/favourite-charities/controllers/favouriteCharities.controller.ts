@@ -12,7 +12,6 @@ import {
 import { FavouriteCharitiesService } from '../services/favouriteCharities.service';
 import { CreateFavouriteCharityDto } from '../dto/createFavouriteCharity.dto';
 import { UpdateFavouriteCharityNoteDto } from '../dto/updateFavouriteCharityNote.dto';
-import { Charity } from 'src/occasions/schemas/occasion.schema';
 import { FavouriteCharity } from '../schemas/favouriteCharity.schema';
 
 @Injectable()
