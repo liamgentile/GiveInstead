@@ -1,31 +1,39 @@
 import { User, Gift, Calendar, Share2, CheckCircle } from "lucide-react";
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { format } from "date-fns";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import Occasion from "../interfaces/Occasion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { donationSchema } from "../schemas/donationSchema";
 import DonateButton from "../components/DonateButton";
+import { usePublicOccasion } from "../hooks/usePublicOccasion"; 
+import { AnimatePresence, motion } from "framer-motion";
+import { format } from "date-fns";
 
 export default function PublicOccasion() {
   const { url } = useParams<{ url: string }>();
-  const [occasion, setOccasion] = useState<Occasion | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [expandedCharity, setExpandedCharity] = useState<string | null>(null);
-  const [totalProgress, setTotalProgress] = useState(0);
-  const [hostName, setHostName] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
-  const handleShareClick = () => {
-    if (url) {
-      navigator.clipboard.writeText(window.location.href).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
-    }
-  };
+  const {
+    occasion,
+    isLoading,
+    expandedCharity,
+    totalProgress,
+    hostName,
+    copied,
+    setExpandedCharity,
+    handleShareClick,
+    setIsLoading,
+  } = url 
+  ? usePublicOccasion(url)
+  : {
+    occasion: null,
+    isLoading: false,
+    expandedCharity: null, 
+    totalProgress: 0,
+    hostName: null,
+    copied: false,
+    setExpandedCharity: () => {},
+    handleShareClick: () => {},
+    setIsLoading: () => {},
+  }
 
   const donationForm = useForm({
     resolver: zodResolver(donationSchema),
@@ -35,67 +43,6 @@ export default function PublicOccasion() {
       message: "",
     },
   });
-
-  useEffect(() => {
-    if (occasion) {
-      const total = occasion.charities.reduce((acc, charity) => {
-        return (
-          acc +
-          (charity.donations?.reduce(
-            (sum, donation) => sum + (donation.amount || 0),
-            0
-          ) || 0)
-        );
-      }, 0);
-      setTotalProgress(total);
-    }
-  }, [occasion?.charities]);
-
-  useEffect(() => {
-    if (!url) return;
-
-    const fetchOccasion = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(
-          `http://localhost:3000/occasions/url/${url}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch occasion data");
-        }
-        const data = await response.json();
-
-        const clerk_user_id = data.clerk_user_id;
-
-        console.log(data);
-
-        if (!clerk_user_id) {
-          throw new Error("Failed to identify user");
-        } else {
-          try {
-            const response = await fetch(
-              `http://localhost:3000/clerk/${clerk_user_id}`
-            );
-            if (!response.ok) {
-              throw new Error("Failed to fetch user name");
-            }
-
-            const data = await response.json();
-            setHostName(data.name);
-          } catch (error) {
-            console.error(error);
-          }
-        }
-        setOccasion(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchOccasion();
-  }, [url]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
@@ -288,7 +235,7 @@ export default function PublicOccasion() {
                           disabled={
                             !donationForm.getValues("amount") ||
                             !donationForm.getValues("name") ||
-                            isLoading
+                            !!isLoading
                           }
                         />
                       </motion.form>

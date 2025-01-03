@@ -1,5 +1,5 @@
 import { Search, Heart, Trash2, PenSquare, Gift, Calendar, Link } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,84 +10,38 @@ import CharityCard from "../components/CharityCard";
 import Charity from "../interfaces/Charity";
 import Occasion from "../interfaces/Occasion";
 import { occasionSchema } from "../schemas/occasionSchema";
-import { fetchFavorites } from "../utils/fetchFavorites";
-import { fetchCharities } from "../utils/fetchCharities";
-import { createOrUpdateOccasion, deleteOccasion, fetchOccasions } from "../utils/occasions";
-import { v4 as uuidv4 } from 'uuid';
 import { useUser } from "@clerk/clerk-react";
+import { useOccasions } from "../hooks/useOccasions";
 
 export default function Occasions() {
   const { user } = useUser();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [occasions, setOccasions] = useState<Occasion[]>([]);
-  const [charities, setCharities] = useState<Charity[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [favorites, setFavorites] = useState<Charity[]>([]);
-  const [selectedCharities, setSelectedCharities] = useState<Charity[]>([]);
+
   const [editingOccasion, setEditingOccasion] = useState<Occasion | null>(null);
+  const [selectedCharities, setSelectedCharities] = useState<Charity[]>([]);
+  const [showForm, setShowForm] = useState<Boolean>(false);
 
-  const handleCreateOrUpdateOccasion = async (data: any) => {
-    setIsLoading(true);
-    try {
-      const occasionData = {
-        clerk_user_id: user?.id,
-        name: data.name,
-        description: data.description,
-        type: data.type,
-        start: data.start,
-        end: data.end,
-        url: editingOccasion ? editingOccasion.url : uuidv4(),
-        charities: selectedCharities.map((charity: any) => ({
-          every_id: charity.ein || charity.every_id,
-          every_slug: charity.slug || charity.every_slug,
-          name: charity.name,
-          website: charity.website,
-          description: charity.description,
-          image_url: charity.image_url,
-        })),
-      };
-
-      const savedOccasion = await createOrUpdateOccasion(occasionData, editingOccasion);
-
-      if (editingOccasion) {
-        setOccasions((prevOccasions) =>
-          prevOccasions.map((o) =>
-            o._id === editingOccasion._id ? { ...o, ...savedOccasion } : o
-          )
-        );
-      } else {
-        setOccasions((prevOccasions) => [...prevOccasions, savedOccasion]);
-      }
-
-      setEditingOccasion(null);
-      setSearchTerm("");
-      form.reset();
-      setShowForm(false);
-    } catch (err) {
-      setError(
-        editingOccasion
-          ? "Failed to update occasion"
-          : "Failed to create occasion"
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const deleteOccasionHandler = async (id: string) => {
-    setIsLoading(true);
-    try {
-      await deleteOccasion(id);
-      setOccasions((prevOccasions) =>
-        prevOccasions.filter((o) => o._id !== id)
-      );
-    } catch (err) {
-      setError("Failed to delete occasion");
-    } finally {
-      setIsLoading(false);
-    }
+  const {
+    occasions,
+    charities,
+    favorites,
+    isLoading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    handleCreateOrUpdateOccasion,
+    deleteOccasionHandler,
+  } = user?.id
+  ? useOccasions(user.id, editingOccasion, selectedCharities)
+  : {
+    occasions: [],
+    charities: [],
+    favorites: [],
+    isLoading: false,
+    searchTerm: "",
+    error: "Could not identify user",
+    setSearchTerm: () => {},
+    handleCreateOrUpdateOccasion: () => {},
+    deleteOccasionHandler: () => {}
   };
 
   const form = useForm<z.infer<typeof occasionSchema>>({
@@ -99,66 +53,6 @@ export default function Occasions() {
       charities: [],
     },
   });
-
-  useEffect(() => {
-    const loadOccasions = async () => {
-      setIsLoading(true);
-      try {
-        const fetchedOccasions = await fetchOccasions(user?.id);
-        setOccasions(fetchedOccasions);
-      } catch (err) {
-        setError("Failed to load occasions");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadOccasions();
-  }, [user?.id]);
-
-  useEffect(() => {
-    const loadFavorites = async () => {
-      setIsLoading(true);
-
-      try {
-        const data = await fetchFavorites(user?.id);
-        setFavorites(data);
-      } catch (err) {
-        setError("Failed to load favorites");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (user?.id) {
-      loadFavorites();
-    }
-  }, [user?.id]);
-
-  useEffect(() => {
-    const searchCharitiesHandler = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const fetchedCharities = await fetchCharities(searchTerm);
-        setCharities(fetchedCharities);
-      } catch (err) {
-        setError("Failed to fetch charities. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (searchTerm) {
-      searchCharitiesHandler();
-    } else {
-      setCharities([]);
-    }
-
-    const debounce = setTimeout(searchCharitiesHandler, 500);
-    return () => clearTimeout(debounce);
-  }, [searchTerm]);
 
   return (
     <Layout>

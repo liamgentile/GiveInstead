@@ -1,4 +1,7 @@
 import Charity from "../interfaces/Charity";
+import EveryDotOrgCharity from "../interfaces/EveryDotOrgCharity";
+
+const EVERY_DOT_ORG_SEARCH_URL = import.meta.env.VITE_EVERY_DOT_ORG_SEARCH_URL
 
 export const fetchCharities = async (searchTerm: string): Promise<Charity[]> => {
     if (!searchTerm) {
@@ -7,7 +10,7 @@ export const fetchCharities = async (searchTerm: string): Promise<Charity[]> => 
   
     const everydotorgAPIKey = import.meta.env.VITE_EVERY_CHARITY_KEY;
     const response = await fetch(
-      `https://partners.every.org/v0.2/search/${searchTerm}?apiKey=${everydotorgAPIKey}`
+      `${EVERY_DOT_ORG_SEARCH_URL}/${searchTerm}?apiKey=${everydotorgAPIKey}`
     );
   
     if (!response.ok) {
@@ -16,7 +19,7 @@ export const fetchCharities = async (searchTerm: string): Promise<Charity[]> => 
   
     const data = await response.json();
   
-    return data.nonprofits.map((charity: any) => ({
+    return data.nonprofits.map((charity: EveryDotOrgCharity) => ({
       _id: "",
       every_id: charity.ein,
       every_slug: charity.slug,

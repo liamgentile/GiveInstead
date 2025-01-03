@@ -5,90 +5,39 @@ import {
   AlertCircle,
   HeartHandshake,
 } from "lucide-react";
-import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
 import { useUser } from "@clerk/clerk-react";
-import Charity from "../interfaces/Charity";
-import { fetchFavorites } from "../utils/fetchFavorites";
-import { removeFavorite, updateNote } from "../utils/updateFavouriteCharities";
+import { useFavouriteCharities } from "../hooks/useFavouriteCharities";
 
 export default function FavoriteCharities() {
   const { user } = useUser();
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [favorites, setFavorites] = useState<Charity[]>([]);
-  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadFavorites = async () => {
-      setIsLoading(true);
-
-      try {
-        const data = await fetchFavorites(user?.id);
-        setFavorites(data);
-      } catch (err) {
-        setError("Failed to load favorites");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (user?.id) {
-      loadFavorites();
-    }
-  }, [user?.id]);
-
-  const handleUpdateNote = async (_id: string, note: string) => {
-    try {
-      await updateNote(_id, note);
-
-      setFavorites((prevFavorites) =>
-        prevFavorites.map((charity) =>
-          charity._id === _id ? { ...charity, note } : charity
-        )
-      );
-
-      setEditingNoteId(null);
-    } catch (err) {
-      setError("Failed to update the note");
-    }
-  };
-
-  const removeFromFavorites = async (_id: string) => {
-    try {
-      await removeFavorite(_id);
-
-      setFavorites((prevFavorites) =>
-        prevFavorites.filter((charity) => charity._id !== _id)
-      );
-    } catch (err) {
-      setError("Failed to remove from favorite");
-    }
-  };
+  const {
+    favorites,
+    isLoading,
+    error,
+    editingNoteId,
+    setEditingNoteId,
+    handleUpdateNote,
+    removeFromFavourites,
+  } = user?.id
+    ? useFavouriteCharities(user.id)
+    : {
+        favorites: [],
+        isLoading: false,
+        error: "Could not identify user",
+        editingNoteId: null,
+        handleUpdateNote: () => {},
+        removeFromFavourites: () => {},
+        setEditingNoteId: () => {}
+      };
 
   return (
     <Layout>
       <h1 className="text-2xl font-semibold px-3 py-4 mb-6">
         Your Favorite Charities
       </h1>
-
-      {isLoading && (
-        <div className="text-center py-12">
-          <motion.div
-            animate={{
-              rotate: 360,
-            }}
-            transition={{
-              duration: 1,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full mx-auto"
-          />
-        </div>
-      )}
 
       {error && (
         <div className="flex items-center justify-center py-12 text-red-500 gap-2">
@@ -181,7 +130,7 @@ export default function FavoriteCharities() {
                     </button>
 
                     <button
-                      onClick={() => removeFromFavorites(charity._id)}
+                      onClick={() => removeFromFavourites(charity._id)}
                       className="inline-flex items-center justify-center px-4 py-2 text-sm text-red-600 border border-red-200 rounded-md hover:bg-red-50"
                     >
                       <Trash2 size={16} className="mr-2" />

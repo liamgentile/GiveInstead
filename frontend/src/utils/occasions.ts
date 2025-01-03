@@ -1,5 +1,8 @@
+const OCCASIONS_BASE_URL = import.meta.env.VITE_OCCASIONS_BASE_URL;
+const CLERK_SERVICE_URL = import.meta.env.VITE_CLERK_SERVICE_URL;
+
 export const fetchOccasions = async (userId: string | undefined) => {
-  const response = await fetch(`http://localhost:3000/occasions/${userId}`);
+  const response = await fetch(`${OCCASIONS_BASE_URL}/${userId}`);
   if (!response.ok) {
     throw new Error("Failed to fetch occasions");
   }
@@ -12,8 +15,8 @@ export const createOrUpdateOccasion = async (
 ) => {
   console.log('Request Data:', occasionData);
   const url = editingOccasion
-    ? `http://localhost:3000/occasions/${editingOccasion._id}`
-    : "http://localhost:3000/occasions";
+    ? `${OCCASIONS_BASE_URL}/${editingOccasion._id}`
+    : OCCASIONS_BASE_URL;
   const method = editingOccasion ? "PATCH" : "POST";
   const response = await fetch(url, {
     method,
@@ -35,7 +38,7 @@ export const createOrUpdateOccasion = async (
 };
 
 export const deleteOccasion = async (id: string) => {
-  const response = await fetch(`http://localhost:3000/occasions/${id}`, {
+  const response = await fetch(`${OCCASIONS_BASE_URL}/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -45,4 +48,33 @@ export const deleteOccasion = async (id: string) => {
   if (!response.ok) {
     throw new Error("Failed to delete occasion");
   }
+};
+
+export const fetchOccasionByUrl = async (url: string) => {
+  if (!url) throw new Error("URL is required");
+
+  const response = await fetch(`${OCCASIONS_BASE_URL}/url/${url}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch occasion data");
+  }
+  const occasionData = await response.json();
+
+  const clerk_user_id = occasionData.clerk_user_id;
+  
+  if (!clerk_user_id) {
+    throw new Error("Failed to identify user");
+  }
+
+  const userResponse = await fetch(`${CLERK_SERVICE_URL}/${clerk_user_id}`);
+
+  if (!userResponse.ok) {
+    throw new Error("Failed to fetch user name");
+  }
+
+  const userData = await userResponse.json();
+
+  return {
+    occasion: occasionData,
+    hostName: userData.name,
+  };
 };

@@ -1,5 +1,8 @@
 import Charity from "../interfaces/Charity";
 
+const FAVOURITE_CHARITY_BASE_URL = import.meta.env.VITE_CREATE_FAVOURITE_CHARITY_BASE_URL;
+const UPDATE_CHARITY_NOTE_URL = import.meta.env.VITE_UPDATE_CHARITY_NOTE_URL;
+
 export const addFavorite = async (
   charity: Charity,
   userId: string
@@ -14,7 +17,7 @@ export const addFavorite = async (
     image_url: charity.image_url,
   };
 
-  const response = await fetch("http://localhost:3000/favourite-charity", {
+  const response = await fetch(FAVOURITE_CHARITY_BASE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(createDto),
@@ -29,7 +32,7 @@ export const addFavorite = async (
 
 export const removeFavorite = async (charityId: string): Promise<void> => {
   const response = await fetch(
-    `http://localhost:3000/favourite-charity/${charityId}`,
+    `${FAVOURITE_CHARITY_BASE_URL}/${charityId}`,
     {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -42,7 +45,7 @@ export const removeFavorite = async (charityId: string): Promise<void> => {
 };
 
 export const updateNote = async (_id: string, note: string): Promise<void> => {
-  const response = await fetch(`http://localhost:3000/favourite-charity/note`, {
+  const response = await fetch(UPDATE_CHARITY_NOTE_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

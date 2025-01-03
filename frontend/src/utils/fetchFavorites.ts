@@ -1,15 +1,11 @@
-export const fetchFavorites = async (userId: string | undefined) => {
-    if (!userId) {
-      throw new Error("User ID is required");
-    }
+const FETCH_FAVOURITE_CHARITIES_API_URL = import.meta.env.VITE_FETCH_FAVOURITE_CHARITIES_API_URL;
 
-    const favouriteCharityAPIURL = import.meta.env.VITE_FAVOURITE_CHARITY_API_URL;
-  
-    const response = await fetch(`${favouriteCharityAPIURL}${userId}`);
-    
-    if (!response.ok) {
-      throw new Error("Failed to fetch favorites");
-    }
-  
-    return response.json();
-  };
+export const fetchFavorites = async (userId: string) => {
+  const response = await fetch(`${FETCH_FAVOURITE_CHARITIES_API_URL}/${userId}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch favorites");
+  }
+
+  return response.json();
+};
