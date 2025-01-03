@@ -5,7 +5,6 @@ import { UpdateFavouriteCharityNoteDto } from '../../src/favourite-charities/dto
 import mongoose from 'mongoose';
 const mongooseMock = require('mongoose-mock');
 
-// Define schema and model mock with mongoose-mock
 const favouriteCharitySchema = new mongoose.Schema({
   every_id: String,
   every_slug: String,
@@ -17,7 +16,6 @@ const favouriteCharitySchema = new mongoose.Schema({
   note: String,
 });
 
-// Use mongoose-mock to create the model
 const FavouriteCharityMock = mongooseMock.model('FavouriteCharity', favouriteCharitySchema);
 
 describe('FavouriteCharitiesService', () => {
@@ -66,7 +64,6 @@ describe('FavouriteCharitiesService', () => {
     it('should create and return a favourite charity', async () => {
       const createdCharity = { ...mockFavouriteCharity, _id: '1' };
       
-      // Mock the .create method on the model
       FavouriteCharityMock.create = jest.fn().mockResolvedValue(createdCharity);
 
       const result = await service.create(mockCreateDto);
