@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Charity from "../interfaces/Charity";
-import { fetchFavorites } from "../utils/fetchFavorites";
-import { removeFavorite, updateNote } from "../utils/updateFavouriteCharities";
+import { fetchFavorites } from "../api/fetchFavorites";
+import { removeFavorite, updateNote } from "../api/updateFavouriteCharities";
 
 export const useFavouriteCharities = (userId: string) => {
   const [favorites, setFavorites] = useState<Charity[]>([]);

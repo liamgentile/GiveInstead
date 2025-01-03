@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchOccasionByUrl } from "../utils/occasions";
+import { fetchOccasionByUrl } from "../api/occasions";
 import Occasion from "../interfaces/Occasion";
 
 export const usePublicOccasion = (url: string) => {

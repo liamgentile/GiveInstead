@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { fetchOccasions, createOrUpdateOccasion, deleteOccasion } from "../utils/occasions";
-import { fetchFavorites } from "../utils/fetchFavorites";
-import { fetchCharities } from "../utils/fetchCharities";
+import { fetchOccasions, createOrUpdateOccasion, deleteOccasion } from "../api/occasions";
+import { fetchFavorites } from "../api/fetchFavorites";
+import { fetchCharities } from "../api/fetchCharities";
 import { v4 as uuidv4 } from 'uuid';
 import Charity from "../interfaces/Charity";
 import Occasion from "../interfaces/Occasion";
@@ -135,6 +135,7 @@ export const useOccasions = (
     favorites,
     isLoading,
     error,
+    searchTerm,
     setSearchTerm,
     handleCreateOrUpdateOccasion,
     deleteOccasionHandler,

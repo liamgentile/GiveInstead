@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { fetchFavorites } from "../utils/fetchFavorites";
-import { fetchCharities } from "../utils/fetchCharities";
-import { addFavorite, removeFavorite } from "../utils/updateFavouriteCharities";
+import { fetchFavorites } from "../api/fetchFavorites";
+import { fetchCharities } from "../api/fetchCharities";
+import { addFavorite, removeFavorite } from "../api/updateFavouriteCharities";
 import Charity from "../interfaces/Charity";
 
 export const useSearchCharities = (userId: string, searchTerm: string) => {

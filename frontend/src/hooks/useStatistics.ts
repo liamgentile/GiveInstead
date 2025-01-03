@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchAllStats } from "../utils/statistics";
+import { fetchAllStats } from "../api/statistics";
 import Stats from "../interfaces/Stats";
 
 export const useStatistics = (userId: string) => {
