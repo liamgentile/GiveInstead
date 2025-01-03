@@ -123,8 +123,16 @@ export default function PublicOccasion() {
 
           {!hasEnded && (
             <p className="text-m sm:text-l m-auto text-center font-semibold text-gray-500 mb-6">
-              Donations are processed by Every.org.
-            </p>
+            Donations are processed by{" "}
+            <a
+              href="https://www.every.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-600 hover:text-green-700"
+            >
+              Every.org
+            </a>.
+          </p>
           )}
 
           <div className="grid gap-8 sm:gap-6">

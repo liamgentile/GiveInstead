@@ -142,7 +142,6 @@ export default function Occasions() {
                   <option value="father's day">Father's Day</option>
                   <option value="other">Other</option>
                 </select>
-            
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="relative">
@@ -171,7 +170,8 @@ export default function Occasions() {
                 <div className="flex items-center space-x-2 text-yellow-600">
                   <AlertTriangle size={16} />
                   <p className="text-sm">
-                    You will not be able to edit the occasion after it has started.
+                    You will not be able to edit the occasion after it has
+                    started.
                   </p>
                 </div>
               </div>
