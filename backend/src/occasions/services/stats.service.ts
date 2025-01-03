@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Occasion } from '../schemas/occasion.schema';
+import { Charity, Occasion } from '../schemas/occasion.schema';
 
 @Injectable()
 export class StatsService {
@@ -20,7 +20,7 @@ export class StatsService {
     return result.length > 0 ? result[0].totalAmount : 0;
   }
 
-  async getTopPerformingCharity(clerkUserId: string): Promise<any> {
+  async getTopPerformingCharity(clerkUserId: string): Promise<Charity> {
     const result = await this.occasionModel.aggregate([
       { $match: { clerk_user_id: clerkUserId } },
       { $unwind: "$charities" },
@@ -39,7 +39,7 @@ export class StatsService {
     return result.length > 0 ? result[0] : null;
   }
 
-  async getMostSuccessfulOccasion(clerkUserId: string): Promise<any> {
+  async getMostSuccessfulOccasion(clerkUserId: string): Promise<Occasion> {
     const result = await this.occasionModel.aggregate([
       { $match: { clerk_user_id: clerkUserId } },
       { $unwind: "$charities" },

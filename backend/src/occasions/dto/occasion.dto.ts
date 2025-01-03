@@ -1,6 +1,6 @@
 import { Charity } from "../schemas/occasion.schema";
 
-export class CreateOccasionDto {
+export class OccasionDto {
   clerk_user_id: string;
   name: string;
   description: string;

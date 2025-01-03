@@ -45,17 +45,16 @@ export class FavouriteCharitiesService {
     return updatedCharity;
   }
 
-  async remove(id: string): Promise<FavouriteCharity | null> {
+  async remove(id: string): Promise<void> {
     const favouriteCharity = await this.favouriteCharityModel
       .findByIdAndDelete(id)
       .exec();
     if (!favouriteCharity) {
       throw new Error('Favourite charity not found');
     }
-    return favouriteCharity;
   }
 
-  async findByUser(clerk_user_id: string) {
+  async findByUser(clerk_user_id: string): Promise<FavouriteCharity[]> {
     return this.favouriteCharityModel.find({ clerk_user_id });
   }
 }

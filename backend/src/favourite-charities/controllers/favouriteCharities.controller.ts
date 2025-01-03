@@ -1,32 +1,75 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Logger,
+  Injectable,
+  ValueProvider,
+} from '@nestjs/common';
 import { FavouriteCharitiesService } from '../services/favouriteCharities.service';
 import { CreateFavouriteCharityDto } from '../dto/createFavouriteCharity.dto';
 import { UpdateFavouriteCharityNoteDto } from '../dto/updateFavouriteCharityNote.dto';
+import { Charity } from 'src/occasions/schemas/occasion.schema';
+import { FavouriteCharity } from '../schemas/favouriteCharity.schema';
 
+@Injectable()
 @Controller('favourite-charity')
 export class FavouriteCharityController {
-  constructor(private readonly favouriteCharitiesService: FavouriteCharitiesService) {}
+  private readonly logger = new Logger(FavouriteCharityController.name);
+
+  constructor(
+    private readonly favouriteCharitiesService: FavouriteCharitiesService,
+  ) {}
 
   @Post()
-  async create(@Body() createFavouriteCharityDto: CreateFavouriteCharityDto) {
-    console.log("Received new favourite charity")
-    return this.favouriteCharitiesService.create(createFavouriteCharityDto);
+  async create(@Body() createFavouriteCharityDto: CreateFavouriteCharityDto): Promise<FavouriteCharity> {
+    try {
+      return await this.favouriteCharitiesService.create(
+        createFavouriteCharityDto,
+      );
+    } catch (error) {
+      this.logger.error('Error creating favourite charity:', error.stack);
+      throw error;
+    }
   }
 
   @Post('note')
-  async updateNote(@Body() UpdateFavouriteCharityNoteDto: UpdateFavouriteCharityNoteDto) {
-    console.log("Received new favourite charity")
-    return this.favouriteCharitiesService.updateNote(UpdateFavouriteCharityNoteDto);
+  async updateNote(
+    @Body() updateFavouriteCharityNoteDto: UpdateFavouriteCharityNoteDto,
+  ): Promise<FavouriteCharity> {
+    try {
+      return await this.favouriteCharitiesService.updateNote(
+        updateFavouriteCharityNoteDto,
+      );
+    } catch (error) {
+      this.logger.error('Error updating favourite charity note:', error.stack);
+      throw error;
+    }
   }
 
   @Get('user/:clerkUserId')
-  async findByUser(@Param('clerkUserId') clerkUserId: string) {
-    console.log(`Received userId: ${clerkUserId}`)
-    return this.favouriteCharitiesService.findByUser(clerkUserId);
+  async findByUser(@Param('clerkUserId') clerkUserId: string): Promise<FavouriteCharity[]> {
+    try {
+      return await this.favouriteCharitiesService.findByUser(clerkUserId);
+    } catch (error) {
+      this.logger.error(
+        'Error retrieving favourite charities by user:',
+        error.stack,
+      );
+      throw error;
+    }
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.favouriteCharitiesService.remove(id);
+  async remove(@Param('id') id: string): Promise<void> {
+    try {
+      return await this.favouriteCharitiesService.remove(id);
+    } catch (error) {
+      this.logger.error('Error removing favourite charity:', error.stack);
+      throw error;
+    }
   }
 }
