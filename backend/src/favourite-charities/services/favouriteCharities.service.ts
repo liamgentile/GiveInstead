@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateFavouriteCharityDto } from '../dto/createFavouriteCharity.dto';
 import { FavouriteCharity } from '../schemas/favouriteCharity.schema';
@@ -7,6 +7,8 @@ import { UpdateFavouriteCharityNoteDto } from '../dto/updateFavouriteCharityNote
 
 @Injectable()
 export class FavouriteCharitiesService {
+  private readonly logger = new Logger(FavouriteCharitiesService.name);
+
   constructor(
     @InjectModel(FavouriteCharity.name)
     private favouriteCharityModel: Model<FavouriteCharity>,
@@ -16,13 +18,9 @@ export class FavouriteCharitiesService {
     createFavouriteCharityDto: CreateFavouriteCharityDto,
   ): Promise<FavouriteCharity> {
     try {
-      const createdFavouriteCharity = new this.favouriteCharityModel(
-        createFavouriteCharityDto,
-      );
-      const saved = await createdFavouriteCharity.save();
-      return saved;
+      return await this.favouriteCharityModel.create(createFavouriteCharityDto);
     } catch (error) {
-      console.error('Error creating favourite charity:', error);
+      this.logger.error('Error creating favourite charity:', error.stack);
       throw error;
     }
   }
@@ -30,31 +28,50 @@ export class FavouriteCharitiesService {
   async updateNote(
     updateFavouriteCharityNoteDto: UpdateFavouriteCharityNoteDto,
   ): Promise<FavouriteCharity> {
-    const { _id, note } = updateFavouriteCharityNoteDto;
+    try {
+      const { _id, note } = updateFavouriteCharityNoteDto;
 
-    const updatedCharity = await this.favouriteCharityModel.findOneAndUpdate(
-      { _id },
-      { $set: { note } },    
-      { new: true },
-    );
+      const updatedCharity = await this.favouriteCharityModel.findOneAndUpdate(
+        { _id },
+        { $set: { note } },
+        { new: true },
+      );
 
-    if (!updatedCharity) {
-      throw new Error('Charity not found or user does not have access to this charity');
+      if (!updatedCharity) {
+        throw new Error(
+          'Charity not found or user does not have access to this charity',
+        );
+      }
+
+      return updatedCharity;
+    } catch (error) {
+      this.logger.error('Error updating charity note:', error.stack);
+      throw error;
     }
-
-    return updatedCharity;
   }
 
   async remove(id: string): Promise<void> {
-    const favouriteCharity = await this.favouriteCharityModel
-      .findByIdAndDelete(id)
-      .exec();
-    if (!favouriteCharity) {
-      throw new Error('Favourite charity not found');
+    try {
+      const favouriteCharity = await this.favouriteCharityModel.findByIdAndDelete(id);
+
+      if (!favouriteCharity) {
+        throw new Error('Favourite charity not found');
+      }
+    } catch (error) {
+      this.logger.error('Error removing favourite charity:', error.stack);
+      throw error;
     }
   }
 
   async findByUser(clerk_user_id: string): Promise<FavouriteCharity[]> {
-    return this.favouriteCharityModel.find({ clerk_user_id });
+    try {
+      return await this.favouriteCharityModel.find({ clerk_user_id });
+    } catch (error) {
+      this.logger.error(
+        'Error finding favourite charities for user:',
+        error.stack,
+      );
+      throw error;
+    }
   }
 }
