@@ -17,6 +17,7 @@ export const useOccasions = (
   const [isLoading, setIsLoading] = useState<Boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [showForm, setShowForm] = useState<Boolean>(false);
 
   const loadOccasions = async () => {
     setIsLoading(true);
@@ -89,6 +90,7 @@ export const useOccasions = (
       }
 
       setSearchTerm("");
+      setShowForm(false);
     } catch (err) {
       setError(
         editingOccasion ? "Failed to update occasion" : "Failed to create occasion"
@@ -120,12 +122,14 @@ export const useOccasions = (
   }, [userId]);
 
   useEffect(() => {
-    if (searchTerm) {
-      searchCharitiesHandler();
-    } else {
-      setCharities([]);
-    }
-    const debounce = setTimeout(searchCharitiesHandler, 500);
+    const debounce = setTimeout(() => {
+      if (searchTerm) {
+        searchCharitiesHandler();
+      } else {
+        setCharities([]);
+      }
+    }, 500);
+  
     return () => clearTimeout(debounce);
   }, [searchTerm]);
 
@@ -136,6 +140,8 @@ export const useOccasions = (
     isLoading,
     error,
     searchTerm,
+    showForm,
+    setShowForm,
     setSearchTerm,
     handleCreateOrUpdateOccasion,
     deleteOccasionHandler,

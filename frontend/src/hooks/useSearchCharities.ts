@@ -25,9 +25,8 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
       }
     };
 
-    if (userId) {
-      loadFavorites();
-    }
+    loadFavorites();
+
   }, [userId]);
 
   useEffect(() => {
@@ -54,6 +53,14 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
 
     return () => clearTimeout(debounce);
   }, [searchTerm]);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isModalOpen]);
 
   const toggleFavorite = async (charity: Charity) => {
     const isFavorited = favorites.some(

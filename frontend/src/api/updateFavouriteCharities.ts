@@ -1,6 +1,6 @@
 import Charity from "../interfaces/Charity";
 
-const FAVOURITE_CHARITY_BASE_URL = import.meta.env.VITE_CREATE_FAVOURITE_CHARITY_BASE_URL;
+const FAVOURITE_CHARITY_BASE_URL = import.meta.env.VITE_FAVOURITE_CHARITY_BASE_URL;
 const UPDATE_CHARITY_NOTE_URL = import.meta.env.VITE_UPDATE_CHARITY_NOTE_URL;
 
 export const addFavorite = async (

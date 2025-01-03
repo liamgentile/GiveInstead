@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { donationSchema } from "../schemas/donationSchema";
 import DonateButton from "../components/DonateButton";
-import { usePublicOccasion } from "../hooks/usePublicOccasion"; 
+import { usePublicOccasion } from "../hooks/usePublicOccasion";
 import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
 
@@ -21,19 +21,19 @@ export default function PublicOccasion() {
     setExpandedCharity,
     handleShareClick,
     setIsLoading,
-  } = url 
-  ? usePublicOccasion(url)
-  : {
-    occasion: null,
-    isLoading: false,
-    expandedCharity: null, 
-    totalProgress: 0,
-    hostName: null,
-    copied: false,
-    setExpandedCharity: () => {},
-    handleShareClick: () => {},
-    setIsLoading: () => {},
-  }
+  } = url
+    ? usePublicOccasion(url)
+    : {
+        occasion: null,
+        isLoading: false,
+        expandedCharity: null,
+        totalProgress: 0,
+        hostName: null,
+        copied: false,
+        setExpandedCharity: () => {},
+        handleShareClick: () => {},
+        setIsLoading: () => {},
+      };
 
   const donationForm = useForm({
     resolver: zodResolver(donationSchema),
@@ -43,6 +43,10 @@ export default function PublicOccasion() {
       message: "",
     },
   });
+
+  const now = new Date();
+  const hasStarted = occasion && now >= new Date(occasion.start);
+  const hasEnded = occasion && now > new Date(occasion.end);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
@@ -94,25 +98,34 @@ export default function PublicOccasion() {
               </div>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-gray-100">
-              <div className="flex justify-between text-sm sm:text-lg mb-2">
-                <span className="text-gray-600 font-medium">
-                  Total Amount Raised
-                </span>
-                <span className="font-semibold text-sm sm:text-lg text-gray-900">
-                  ${totalProgress.toLocaleString()}
-                </span>
+            {hasStarted ? (
+              <div className="mt-10 pt-8 border-t border-gray-100">
+                <div className="flex justify-between text-sm sm:text-lg mb-2">
+                  <span className="text-gray-600 font-medium">
+                    Total Amount Raised
+                  </span>
+                  <span className="font-semibold text-sm sm:text-lg text-gray-900">
+                    ${totalProgress.toLocaleString()}
+                  </span>
+                </div>
               </div>
-            </div>
+            ) : (
+              <p className="mt-10 pt-8 border-t border-gray-100 text-gray-600 text-center">
+                This occasion hasn&apos;t started yet, check back on{" "}
+                {format(new Date(occasion.start), "MMM d, yyyy 'at' h:mm a")}.
+              </p>
+            )}
           </motion.div>
 
           <h2 className="text-xl sm:text-2xl m-auto text-center font-semibold text-gray-900 mb-6">
             Supported Charities
           </h2>
 
-          <p className="text-m sm:text-l m-auto text-center font-semibold text-gray-500 mb-6">
-            Donations are processed by Every.org.
-          </p>
+          {!hasEnded && (
+            <p className="text-m sm:text-l m-auto text-center font-semibold text-gray-500 mb-6">
+              Donations are processed by Every.org.
+            </p>
+          )}
 
           <div className="grid gap-8 sm:gap-6">
             <AnimatePresence mode="wait">
@@ -148,113 +161,109 @@ export default function PublicOccasion() {
                     </div>
                   </div>
 
-                  <AnimatePresence mode="wait">
-                    {expandedCharity === charity._id && (
-                      <motion.form
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        onSubmit={donationForm.handleSubmit(async (data) => {
-                          setIsLoading(true);
-                          try {
-                            // Here you would handle the donation submission logic
-                            // Example: POST the donation data to the server
-                            console.log(data);
-                          } catch (error) {
-                            console.error("Error submitting donation", error);
-                          } finally {
-                            setIsLoading(false);
-                          }
-                        })}
-                        className="space-y-4 border-t pt-6 mt-6"
-                      >
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Your Name
-                          </label>
-                          <input
-                            {...donationForm.register("name")}
-                            className={`w-full px-4 py-2 rounded-lg border transition-colors focus:ring-2 focus:ring-green-500 ${
-                              donationForm.formState.errors.name
-                                ? "border-red-300 focus:ring-red-500"
-                                : "border-gray-200"
-                            }`}
-                          />
-                          {donationForm.formState.errors.name && (
-                            <p className="mt-1 text-sm text-red-500">
-                              {donationForm.formState.errors.name.message}
-                            </p>
-                          )}
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Amount
-                          </label>
-                          <input
-                            type="number"
-                            {...donationForm.register("amount", {
-                              valueAsNumber: true,
-                            })}
-                            className={`w-full px-4 py-2 rounded-lg border transition-colors focus:ring-2 focus:ring-green-500 ${
-                              donationForm.formState.errors.amount
-                                ? "border-red-300 focus:ring-red-500"
-                                : "border-gray-200"
-                            }`}
-                          />
-                          {donationForm.formState.errors.amount && (
-                            <p className="mt-1 text-sm text-red-500">
-                              {donationForm.formState.errors.amount.message}
-                            </p>
-                          )}
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Message (Optional)
-                          </label>
-                          <textarea
-                            {...donationForm.register("message")}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-200 transition-colors focus:ring-2 focus:ring-green-500"
-                            rows={3}
-                          />
-                        </div>
-
-                        {/* <button
-                          type="submit"
-                          disabled={isLoading}
-                          className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors relative overflow-hidden"
+                  {!hasStarted || hasEnded ? null : (
+                    <AnimatePresence mode="wait">
+                      {expandedCharity === charity._id && (
+                        <motion.form
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          onSubmit={donationForm.handleSubmit(async (data) => {
+                            setIsLoading(true);
+                            try {
+                              // Here you would handle the donation submission logic
+                              // Example: POST the donation data to the server
+                              console.log(data);
+                            } catch (error) {
+                              console.error("Error submitting donation", error);
+                            } finally {
+                              setIsLoading(false);
+                            }
+                          })}
+                          className="space-y-4 border-t pt-6 mt-6"
                         >
-                          {isLoading ? "Processing..." : "Donate"}
-                        </button> */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Your Name
+                            </label>
+                            <input
+                              {...donationForm.register("name")}
+                              className={`w-full px-4 py-2 rounded-lg border transition-colors focus:ring-2 focus:ring-green-500 ${
+                                donationForm.formState.errors.name
+                                  ? "border-red-300 focus:ring-red-500"
+                                  : "border-gray-200"
+                              }`}
+                            />
+                            {donationForm.formState.errors.name && (
+                              <p className="mt-1 text-sm text-red-500">
+                                {donationForm.formState.errors.name.message}
+                              </p>
+                            )}
+                          </div>
 
-                        <DonateButton
-                          slug={charity.every_slug}
-                          amount={Number(donationForm.getValues("amount"))}
-                          disabled={
-                            !donationForm.getValues("amount") ||
-                            !donationForm.getValues("name") ||
-                            !!isLoading
-                          }
-                        />
-                      </motion.form>
-                    )}
-                  </AnimatePresence>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Amount
+                            </label>
+                            <input
+                              type="number"
+                              {...donationForm.register("amount", {
+                                valueAsNumber: true,
+                              })}
+                              className={`w-full px-4 py-2 rounded-lg border transition-colors focus:ring-2 focus:ring-green-500 ${
+                                donationForm.formState.errors.amount
+                                  ? "border-red-300 focus:ring-red-500"
+                                  : "border-gray-200"
+                              }`}
+                            />
+                            {donationForm.formState.errors.amount && (
+                              <p className="mt-1 text-sm text-red-500">
+                                {donationForm.formState.errors.amount.message}
+                              </p>
+                            )}
+                          </div>
 
-                  <button
-                    onClick={() => {
-                      setExpandedCharity(
-                        expandedCharity === charity._id ? null : charity._id
-                      );
-                      if (expandedCharity === charity._id) {
-                        donationForm.reset();
-                      }
-                    }}
-                    className="mt-4 text-green-600 hover:text-green-700 font-medium text-sm"
-                  >
-                    {expandedCharity === charity._id ? "Close" : "Donate Now"}
-                  </button>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Message (Optional)
+                            </label>
+                            <textarea
+                              {...donationForm.register("message")}
+                              className="w-full px-4 py-2 rounded-lg border border-gray-200 transition-colors focus:ring-2 focus:ring-green-500"
+                              rows={3}
+                            />
+                          </div>
+
+                          <DonateButton
+                            slug={charity.every_slug}
+                            amount={Number(donationForm.getValues("amount"))}
+                            disabled={
+                              !donationForm.getValues("amount") ||
+                              !donationForm.getValues("name") ||
+                              !!isLoading
+                            }
+                          />
+                        </motion.form>
+                      )}
+                    </AnimatePresence>
+                  )}
+
+                  {hasStarted && !hasEnded && (
+                    <button
+                      onClick={() => {
+                        setExpandedCharity(
+                          expandedCharity === charity._id ? null : charity._id
+                        );
+                        if (expandedCharity === charity._id) {
+                          donationForm.reset();
+                        }
+                      }}
+                      className="mt-4 text-green-600 hover:text-green-700 font-medium text-sm"
+                    >
+                      {expandedCharity === charity._id ? "Close" : "Donate Now"}
+                    </button>
+                  )}
                 </motion.div>
               ))}
             </AnimatePresence>

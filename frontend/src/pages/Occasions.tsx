@@ -1,4 +1,14 @@
-import { Search, Heart, Trash2, PenSquare, Gift, Calendar, Link } from "lucide-react";
+import {
+  Search,
+  Heart,
+  Trash2,
+  PenSquare,
+  Gift,
+  Calendar,
+  Link,
+  HandHeart,
+  AlertTriangle,
+} from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
@@ -18,7 +28,6 @@ export default function Occasions() {
 
   const [editingOccasion, setEditingOccasion] = useState<Occasion | null>(null);
   const [selectedCharities, setSelectedCharities] = useState<Charity[]>([]);
-  const [showForm, setShowForm] = useState<Boolean>(false);
 
   const {
     occasions,
@@ -27,22 +36,26 @@ export default function Occasions() {
     isLoading,
     error,
     searchTerm,
+    showForm,
+    setShowForm,
     setSearchTerm,
     handleCreateOrUpdateOccasion,
     deleteOccasionHandler,
   } = user?.id
-  ? useOccasions(user.id, editingOccasion, selectedCharities)
-  : {
-    occasions: [],
-    charities: [],
-    favorites: [],
-    isLoading: false,
-    searchTerm: "",
-    error: "Could not identify user",
-    setSearchTerm: () => {},
-    handleCreateOrUpdateOccasion: () => {},
-    deleteOccasionHandler: () => {}
-  };
+    ? useOccasions(user.id, editingOccasion, selectedCharities)
+    : {
+        occasions: [],
+        charities: [],
+        favorites: [],
+        isLoading: false,
+        searchTerm: "",
+        error: "Could not identify user",
+        showForm: false,
+        setShowForm: () => {},
+        setSearchTerm: () => {},
+        handleCreateOrUpdateOccasion: () => {},
+        deleteOccasionHandler: () => {},
+      };
 
   const form = useForm<z.infer<typeof occasionSchema>>({
     resolver: zodResolver(occasionSchema),
@@ -129,6 +142,7 @@ export default function Occasions() {
                   <option value="father's day">Father's Day</option>
                   <option value="other">Other</option>
                 </select>
+            
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="relative">
@@ -153,6 +167,12 @@ export default function Occasions() {
                       className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
                     />
                   </div>
+                </div>
+                <div className="flex items-center space-x-2 text-yellow-600">
+                  <AlertTriangle size={16} />
+                  <p className="text-sm">
+                    You will not be able to edit the occasion after it has started.
+                  </p>
                 </div>
               </div>
 
@@ -198,8 +218,14 @@ export default function Occasions() {
                           charity={charity}
                           onSelect={() => {
                             setSelectedCharities((prev) => {
-                              if (prev.find((c) => c.every_id === charity.every_id)) {
-                                return prev.filter((c) => c.every_id !== charity.every_id);
+                              if (
+                                prev.find(
+                                  (c) => c.every_id === charity.every_id
+                                )
+                              ) {
+                                return prev.filter(
+                                  (c) => c.every_id !== charity.every_id
+                                );
                               } else {
                                 return [...prev, charity];
                               }
@@ -226,8 +252,12 @@ export default function Occasions() {
                         charity={charity}
                         onSelect={() => {
                           setSelectedCharities((prev) => {
-                            if (prev.find((c) => c.every_id === charity.every_id)) {
-                              return prev.filter((c) => c.every_id !== charity.every_id);
+                            if (
+                              prev.find((c) => c.every_id === charity.every_id)
+                            ) {
+                              return prev.filter(
+                                (c) => c.every_id !== charity.every_id
+                              );
                             } else {
                               return [...prev, charity];
                             }
@@ -239,6 +269,34 @@ export default function Occasions() {
                       />
                     ))}
                   </div>
+                </motion.div>
+
+                {/* Selected Charities Section */}
+                <motion.div layout className="space-y-4">
+                  <h3 className="font-medium text-gray-900 flex items-center gap-2 mt-8">
+                    <HandHeart size={16} className="text-purple-500" />
+                    Selected Charities
+                  </h3>
+                  {selectedCharities.length > 0 ? (
+                    <div className="grid gap-3">
+                      {selectedCharities.map((charity) => (
+                        <CharityCard
+                          key={charity.every_id}
+                          charity={charity}
+                          onSelect={() => {
+                            setSelectedCharities((prev) =>
+                              prev.filter(
+                                (c) => c.every_id !== charity.every_id
+                              )
+                            );
+                          }}
+                          isSelected={true} // Always selected since it's in the selectedCharities list
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No charities selected yet.</p>
+                  )}
                 </motion.div>
               </div>
 
@@ -296,7 +354,7 @@ export default function Occasions() {
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                <motion.button
+                  <motion.button
                     whileHover={{
                       scale: 1.05,
                     }}
@@ -305,8 +363,8 @@ export default function Occasions() {
                     }}
                     className="p-2 text-gray-600 hover:text-gray-600 hover:bg-gray-50 rounded-full transition-colors"
                   >
-                    <a href={ 'occasions/' + occasion.url } target="_blank">
-                    <Link size={20} />
+                    <a href={"occasions/" + occasion.url} target="_blank">
+                      <Link size={20} />
                     </a>
                   </motion.button>
                   <motion.button

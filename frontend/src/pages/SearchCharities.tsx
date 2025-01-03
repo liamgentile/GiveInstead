@@ -21,9 +21,9 @@ export default function SearchCharities() {
     setSelectedCharity,
     setIsModalOpen,
     toggleFavorite,
-  } = user?.id 
-  ? useSearchCharities(user?.id, searchTerm)
-  : {
+  } = user?.id
+    ? useSearchCharities(user?.id, searchTerm)
+    : {
         isLoading: false,
         charities: [],
         selectedCharity: null,
@@ -32,8 +32,8 @@ export default function SearchCharities() {
         favorites: [],
         setSelectedCharity: () => {},
         setIsModalOpen: () => {},
-        toggleFavorite: () => {}
-  }
+        toggleFavorite: () => {},
+      };
 
   return (
     <Layout>
@@ -81,7 +81,10 @@ export default function SearchCharities() {
               className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden relative"
             >
               <button
-                onClick={(_e) => toggleFavorite(charity)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(charity);
+                }}
                 className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white transition-colors z-10"
               >
                 <Heart
@@ -128,8 +131,6 @@ export default function SearchCharities() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredCharities.map((charity) => (
             <motion.div
-              key={charity.every_id}
-              layoutId={charity.every_id}
               onClick={() => {
                 setSelectedCharity(charity);
                 setIsModalOpen(true);
@@ -137,7 +138,10 @@ export default function SearchCharities() {
               className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden border-2 border-green-100 relative"
             >
               <button
-                onClick={(_e) => toggleFavorite(charity)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(charity);
+                }}
                 className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white transition-colors z-10"
               >
                 <Heart
@@ -224,18 +228,23 @@ export default function SearchCharities() {
                 </p>
 
                 <div className="flex gap-3">
-                  <a
-                    href={selectedCharity.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 bg-green-800 text-white rounded-md hover:bg-green-900 transition-colors"
-                  >
-                    Visit Website
-                    <ExternalLink size={16} className="ml-2" />
-                  </a>
+                  {selectedCharity.website && (
+                    <a
+                      href={selectedCharity.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-4 py-2 bg-green-800 text-white rounded-md hover:bg-green-900 transition-colors"
+                    >
+                      Visit Website
+                      <ExternalLink size={16} className="ml-2" />
+                    </a>
+                  )}
 
                   <button
-                    onClick={(_e) => toggleFavorite(selectedCharity)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(selectedCharity);
+                    }}
                     className="inline-flex items-center px-4 py-2 border-2 border-red-400 rounded-md hover:bg-red-50 transition-colors"
                   >
                     <Heart
