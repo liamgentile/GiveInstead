@@ -50,7 +50,7 @@ export default function SearchCharities() {
         </div>
       </div>
 
-      {isLoading && (
+      {isLoading && searchTerm && (
         <div className="text-center py-12">
           <motion.div
             animate={{
