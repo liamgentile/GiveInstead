@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateFavouriteCharityDto } from '../dto/createFavouriteCharity.dto';
 import { FavouriteCharity } from '../schemas/favouriteCharity.schema';
@@ -21,7 +21,7 @@ export class FavouriteCharitiesService {
       return await this.favouriteCharityModel.create(createFavouriteCharityDto);
     } catch (error) {
       this.logger.error('Error creating favourite charity:', error.stack);
-      throw error;
+      throw new InternalServerErrorException('Error creating favourite charity');
     }
   }
 
@@ -38,7 +38,7 @@ export class FavouriteCharitiesService {
       );
 
       if (!updatedCharity) {
-        throw new Error(
+        throw new NotFoundException(
           'Charity not found or user does not have access to this charity',
         );
       }
@@ -46,7 +46,9 @@ export class FavouriteCharitiesService {
       return updatedCharity;
     } catch (error) {
       this.logger.error('Error updating charity note:', error.stack);
-      throw error;
+      throw error instanceof NotFoundException 
+        ? error 
+        : new InternalServerErrorException('Error updating charity note');
     }
   }
 
@@ -55,11 +57,13 @@ export class FavouriteCharitiesService {
       const favouriteCharity = await this.favouriteCharityModel.findByIdAndDelete(id);
 
       if (!favouriteCharity) {
-        throw new Error('Favourite charity not found');
+        throw new NotFoundException('Favourite charity not found');
       }
     } catch (error) {
       this.logger.error('Error removing favourite charity:', error.stack);
-      throw error;
+      throw error instanceof NotFoundException 
+        ? error 
+        : new InternalServerErrorException('Error removing favourite charity');
     }
   }
 
@@ -71,7 +75,7 @@ export class FavouriteCharitiesService {
         'Error finding favourite charities for user:',
         error.stack,
       );
-      throw error;
+      throw new InternalServerErrorException('Error finding favourite charities');
     }
   }
 }

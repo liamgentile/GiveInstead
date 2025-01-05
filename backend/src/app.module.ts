@@ -8,14 +8,14 @@ import { ClerkModule } from './clerk/clerk.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, 
+      isGlobal: true,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
-        uri: config.get<string>('MONGO_DB_URI'), 
-      })
+        uri: config.get<string>('MONGO_DB_URI'),
+      }),
     }),
     FavouriteCharitiesModule,
     OccasionsModule,

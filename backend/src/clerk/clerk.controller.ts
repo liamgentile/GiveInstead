@@ -1,14 +1,25 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
 import { ClerkService } from './clerk.service';
 
 @Controller('clerk')
 export class ClerkController {
+  private readonly logger = new Logger(ClerkController.name);
+
   constructor(private readonly clerkService: ClerkService) {}
 
   @Get(':clerkUserId')
-  async getUserName(@Param('clerkUserId') clerkUserId: string) {
-    const userName = await this.clerkService.getUserName(clerkUserId);
-
-    return { name: userName };
+  async getUserName(@Param('clerkUserId') clerkUserId: string): Promise<string> {
+    try {
+      return  await this.clerkService.getUserName(clerkUserId);
+    } catch (error) {
+      this.logger.error('User name not available', error.stack);
+      throw new NotFoundException('User name not available');
+    }
   }
 }

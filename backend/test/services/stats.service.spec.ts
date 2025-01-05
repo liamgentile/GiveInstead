@@ -10,7 +10,6 @@ describe('StatsService', () => {
 
   const mockClerkUserId = 'user123';
 
-  // Mock data
   const mockOccasions = [
     {
       _id: '1',
