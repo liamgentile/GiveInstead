@@ -1,7 +1,7 @@
 import Charity from "./Charity";
 
 export default interface Occasion {
-    _id: string;
+    _id?: string;
     name: string;
     description: string;
     type: "birthday" | "graduation" | "christmas" | "hanukkah" | "eid" | "diwali" | "mother's day" | "father's day" | "other";

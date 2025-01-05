@@ -18,15 +18,12 @@ import * as z from "zod";
 import Layout from "../components/Layout";
 import CharityCard from "../components/CharityCard";
 import Charity from "../interfaces/Charity";
-import Occasion from "../interfaces/Occasion";
 import { occasionSchema } from "../schemas/occasionSchema";
 import { useUser } from "@clerk/clerk-react";
 import { useOccasions } from "../hooks/useOccasions";
 
 export default function Occasions() {
   const { user } = useUser();
-
-  const [editingOccasion, setEditingOccasion] = useState<Occasion | null>(null);
   const [selectedCharities, setSelectedCharities] = useState<Charity[]>([]);
 
   const {
@@ -39,10 +36,12 @@ export default function Occasions() {
     showForm,
     setShowForm,
     setSearchTerm,
+    setIsEditing,
+    setEditingId,
     handleCreateOrUpdateOccasion,
     deleteOccasionHandler,
   } = user?.id
-    ? useOccasions(user.id, editingOccasion, selectedCharities)
+    ? useOccasions(user.id, selectedCharities)
     : {
         occasions: [],
         charities: [],
@@ -53,6 +52,8 @@ export default function Occasions() {
         showForm: false,
         setShowForm: () => {},
         setSearchTerm: () => {},
+        setIsEditing: () => {},
+        setEditingId: () => {},
         handleCreateOrUpdateOccasion: () => {},
         deleteOccasionHandler: () => {},
       };
@@ -305,7 +306,8 @@ export default function Occasions() {
                   type="button"
                   onClick={() => {
                     setShowForm(false);
-                    setEditingOccasion(null);
+                    setIsEditing(false);
+                    setEditingId(null);
                     setSearchTerm("");
                   }}
                   className="px-6 py-2 text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50"
@@ -375,7 +377,8 @@ export default function Occasions() {
                       scale: 0.95,
                     }}
                     onClick={() => {
-                      setEditingOccasion(occasion);
+                      setIsEditing(true);
+                      setEditingId(occasion._id || null);
                       setShowForm(true);
                       form.setValue("name", occasion.name);
                       form.setValue("description", occasion.description);
@@ -401,7 +404,7 @@ export default function Occasions() {
                     whileTap={{
                       scale: 0.95,
                     }}
-                    onClick={() => deleteOccasionHandler(occasion._id)}
+                    onClick={() => deleteOccasionHandler(occasion._id || '')}
                     className="p-2 text-red-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
                   >
                     <Trash2 size={20} />
@@ -413,7 +416,8 @@ export default function Occasions() {
           <button
             onClick={() => {
               setShowForm(true);
-              setEditingOccasion(null);
+              setIsEditing(false);
+              setEditingId(null);
               setSearchTerm("");
               setSelectedCharities([]);
               form.reset();

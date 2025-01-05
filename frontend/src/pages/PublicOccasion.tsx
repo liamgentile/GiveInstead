@@ -261,7 +261,7 @@ export default function PublicOccasion() {
                     <button
                       onClick={() => {
                         setExpandedCharity(
-                          expandedCharity === charity._id ? null : charity._id
+                          expandedCharity === charity._id ? null : charity._id ?? null
                         );
                         if (expandedCharity === charity._id) {
                           donationForm.reset();

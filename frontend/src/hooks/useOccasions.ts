@@ -8,7 +8,6 @@ import Occasion from "../interfaces/Occasion";
 
 export const useOccasions = (
   userId: string,
-  editingOccasion: Occasion | null,
   selectedCharities: Charity[]
 ) => {
   const [occasions, setOccasions] = useState<Occasion[]>([]);
@@ -18,6 +17,8 @@ export const useOccasions = (
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showForm, setShowForm] = useState<Boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const loadOccasions = async () => {
     setIsLoading(true);
@@ -56,7 +57,7 @@ export const useOccasions = (
     }
   };
 
-  const handleCreateOrUpdateOccasion = async (data: any) => {
+  const handleCreateOrUpdateOccasion = async (data: any): Promise<void> => {
     setIsLoading(true);
     try {
       const occasionData = {
@@ -66,7 +67,7 @@ export const useOccasions = (
         type: data.type,
         start: data.start,
         end: data.end,
-        url: editingOccasion ? editingOccasion.url : uuidv4(),
+        url: isEditing ? occasions.find(o => o._id === editingId)?.url : uuidv4(),
         charities: selectedCharities.map((charity: any) => ({
           every_id: charity.ein || charity.every_id,
           every_slug: charity.slug || charity.every_slug,
@@ -77,12 +78,12 @@ export const useOccasions = (
         })),
       };
 
-      const savedOccasion = await createOrUpdateOccasion(occasionData, editingOccasion);
+      const savedOccasion = await createOrUpdateOccasion(occasionData, isEditing ? editingId : null);
 
-      if (editingOccasion) {
+      if (isEditing) {
         setOccasions((prevOccasions) =>
           prevOccasions.map((o) =>
-            o._id === editingOccasion._id ? { ...o, ...savedOccasion } : o
+            o._id === editingId ? { ...o, ...savedOccasion } : o
           )
         );
       } else {
@@ -91,16 +92,18 @@ export const useOccasions = (
 
       setSearchTerm("");
       setShowForm(false);
+      setIsEditing(false);
+      setEditingId(null);
     } catch (err) {
       setError(
-        editingOccasion ? "Failed to update occasion" : "Failed to create occasion"
+        isEditing ? "Failed to update occasion" : "Failed to create occasion"
       );
     } finally {
       setIsLoading(false);
     }
   };
 
-  const deleteOccasionHandler = async (id: string) => {
+  const deleteOccasionHandler = async (id: string): Promise<void> => {
     setIsLoading(true);
     try {
       await deleteOccasion(id);
@@ -143,6 +146,8 @@ export const useOccasions = (
     showForm,
     setShowForm,
     setSearchTerm,
+    setIsEditing,
+    setEditingId,
     handleCreateOrUpdateOccasion,
     deleteOccasionHandler,
   };

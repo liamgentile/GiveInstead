@@ -21,22 +21,22 @@ async function handleJsonResponse<T>(response: Response): Promise<T | null> {
 
 export const fetchLifetimeRaised = async (
   userId: string
-): Promise<{ amount: number }> => {
+): Promise<Stats["lifetimeRaised"]> => {
   try {
     const response = await fetch(`${LIFETIME_RAISED_URL}/${userId}`);
     if (!response.ok) {
       if (response.status === 404) {
-        return { amount: 0 };
+        return 0;
       }
       throw new Error(
         `Failed to fetch lifetime raised stats: ${response.statusText}`
       );
     }
-    const data = await handleJsonResponse<{ amount: number }>(response);
-    return data || { amount: 0 };
+    const data = await handleJsonResponse<Stats["lifetimeRaised"]>(response);
+    return data || 0;
   } catch (error) {
     console.error("Error in fetchLifetimeRaised:", error);
-    return { amount: 0 };
+    return 0;
   }
 };
 
@@ -103,7 +103,7 @@ export const fetchAllStats = async (userId: string): Promise<Stats> => {
     ]);
 
     return {
-      lifetimeRaised: lifetimeRaised.amount,
+      lifetimeRaised,
       topCharity,
       topOccasion: {
         ...topOccasion,

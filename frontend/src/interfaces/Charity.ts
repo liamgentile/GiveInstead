@@ -1,7 +1,7 @@
 import Donation from "./Donation";
 
 export default interface Charity {
-    _id: string;
+    _id?: string;
     every_id?: string;
     every_slug: string;
     name?: string;

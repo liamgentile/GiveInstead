@@ -1,7 +1,10 @@
+import Occasion from "../interfaces/Occasion";
+import OccasionWithHostName from "../interfaces/OccasionWithHostName";
+
 const OCCASIONS_BASE_URL = import.meta.env.VITE_OCCASIONS_BASE_URL;
 const CLERK_SERVICE_URL = import.meta.env.VITE_CLERK_SERVICE_URL;
 
-export const fetchOccasions = async (userId: string | undefined) => {
+export const fetchOccasions = async (userId: string) => {
   const response = await fetch(`${OCCASIONS_BASE_URL}/${userId}`);
   if (!response.ok) {
     throw new Error("Failed to fetch occasions");
@@ -10,14 +13,14 @@ export const fetchOccasions = async (userId: string | undefined) => {
 };
 
 export const createOrUpdateOccasion = async (
-  occasionData: Object,
-  editingOccasion: any
-) => {
+  occasionData: Occasion,
+  editingId: string | null
+): Promise<Occasion> => {
   console.log('Request Data:', occasionData);
-  const url = editingOccasion
-    ? `${OCCASIONS_BASE_URL}/${editingOccasion._id}`
+  const url = editingId
+    ? `${OCCASIONS_BASE_URL}/${editingId}`
     : OCCASIONS_BASE_URL;
-  const method = editingOccasion ? "PATCH" : "POST";
+  const method = editingId ? "PATCH" : "POST";
   const response = await fetch(url, {
     method,
     headers: {
@@ -28,7 +31,7 @@ export const createOrUpdateOccasion = async (
 
   if (!response.ok) {
     throw new Error(
-      editingOccasion
+      editingId
         ? "Failed to update occasion"
         : "Failed to create occasion"
     );
@@ -37,7 +40,7 @@ export const createOrUpdateOccasion = async (
   return response.json();
 };
 
-export const deleteOccasion = async (id: string) => {
+export const deleteOccasion = async (id: string): Promise<void> => {
   const response = await fetch(`${OCCASIONS_BASE_URL}/${id}`, {
     method: "DELETE",
     headers: {
@@ -50,7 +53,7 @@ export const deleteOccasion = async (id: string) => {
   }
 };
 
-export const fetchOccasionByUrl = async (url: string) => {
+export const fetchOccasionByUrl = async (url: string): Promise<OccasionWithHostName> => {
   if (!url) throw new Error("URL is required");
 
   const response = await fetch(`${OCCASIONS_BASE_URL}/url/${url}`);
@@ -71,10 +74,10 @@ export const fetchOccasionByUrl = async (url: string) => {
     throw new Error("Failed to fetch user name");
   }
 
-  const userData = await userResponse.json();
+  const userData = await userResponse.text();
 
   return {
     occasion: occasionData,
-    hostName: userData.name,
+    hostName: userData,
   };
 };
