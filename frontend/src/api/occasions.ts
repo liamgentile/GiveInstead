@@ -16,7 +16,6 @@ export const createOrUpdateOccasion = async (
   occasionData: Occasion,
   editingId: string | null
 ): Promise<Occasion> => {
-  console.log('Request Data:', occasionData);
   const url = editingId
     ? `${OCCASIONS_BASE_URL}/${editingId}`
     : OCCASIONS_BASE_URL;
@@ -31,9 +30,7 @@ export const createOrUpdateOccasion = async (
 
   if (!response.ok) {
     throw new Error(
-      editingId
-        ? "Failed to update occasion"
-        : "Failed to create occasion"
+      editingId ? "Failed to update occasion" : "Failed to create occasion"
     );
   }
 
@@ -53,17 +50,18 @@ export const deleteOccasion = async (id: string): Promise<void> => {
   }
 };
 
-export const fetchOccasionByUrl = async (url: string): Promise<OccasionWithHostName> => {
-  if (!url) throw new Error("URL is required");
-
+export const fetchOccasionByUrl = async (
+  url: string
+): Promise<OccasionWithHostName> => {
   const response = await fetch(`${OCCASIONS_BASE_URL}/url/${url}`);
+  
   if (!response.ok) {
     throw new Error("Failed to fetch occasion data");
   }
   const occasionData = await response.json();
 
   const clerk_user_id = occasionData.clerk_user_id;
-  
+
   if (!clerk_user_id) {
     throw new Error("Failed to identify user");
   }
