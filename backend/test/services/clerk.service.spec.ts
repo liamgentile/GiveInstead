@@ -18,7 +18,9 @@ describe('ClerkService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    loggerSpy = jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+    loggerSpy = jest
+      .spyOn(Logger.prototype, 'error')
+      .mockImplementation(() => {});
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [ClerkService],
@@ -85,7 +87,9 @@ describe('ClerkService', () => {
 
       (clerkClient.users.getUser as jest.Mock).mockResolvedValue(mockUser);
 
-      await expect(service.getUserName(clerkUserId)).rejects.toThrow('Failed to fetch user from Clerk');
+      await expect(service.getUserName(clerkUserId)).rejects.toThrow(
+        'Failed to fetch user from Clerk',
+      );
       expect(loggerSpy).toHaveBeenCalledWith('User name not available');
     });
 
@@ -93,8 +97,13 @@ describe('ClerkService', () => {
       const error = new Error('API Error');
       (clerkClient.users.getUser as jest.Mock).mockRejectedValue(error);
 
-      await expect(service.getUserName(clerkUserId)).rejects.toThrow('Failed to fetch user from Clerk');
-      expect(loggerSpy).toHaveBeenCalledWith('Failed to fetch user from Clerk', error.stack);
+      await expect(service.getUserName(clerkUserId)).rejects.toThrow(
+        'Failed to fetch user from Clerk',
+      );
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Failed to fetch user from Clerk',
+        error.stack,
+      );
     });
   });
 });
