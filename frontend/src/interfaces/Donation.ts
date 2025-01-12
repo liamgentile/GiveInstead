@@ -1,6 +1,7 @@
 export default interface Donation {
     _id: string;
-    name: string;
+    donor_name: string;
     message?: string;
-    amount: number
+    amount: number;
+    created_at: Date;
 }

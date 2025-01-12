@@ -1,55 +1,73 @@
 import { User, Gift, Calendar, Share2, CheckCircle } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { donationSchema } from "../schemas/donationSchema";
-import DonateButton from "../components/DonateButton";
 import { usePublicOccasion } from "../hooks/usePublicOccasion";
 import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
+import { ToastContainer, toast } from "react-toastify";
+import { useEffect, useRef } from "react";
 
 export default function PublicOccasion() {
   const { url } = useParams<{ url: string }>();
 
+  const EVERY_DOT_ORG_BASE_URL = import.meta.env.VITE_EVERY_DOT_ORG_BASE_URL;
+  const EVERY_DOT_ORG_WEBHOOK_KEY = import.meta.env.VITE_EVERY_DOT_ORG_WEBHOOK_KEY;
+
   const {
     occasion,
-    isLoading,
-    expandedCharity,
     totalProgress,
     hostName,
     copied,
-    setExpandedCharity,
     handleShareClick,
-    setIsLoading,
   } = url
     ? usePublicOccasion(url)
     : {
         occasion: null,
-        isLoading: false,
-        expandedCharity: null,
         totalProgress: 0,
         hostName: null,
         copied: false,
-        setExpandedCharity: () => {},
         handleShareClick: () => {},
-        setIsLoading: () => {},
       };
-
-  const donationForm = useForm({
-    resolver: zodResolver(donationSchema),
-    defaultValues: {
-      name: "",
-      amount: 0,
-      message: "",
-    },
-  });
 
   const now = new Date();
   const hasStarted = occasion && now >= new Date(occasion.start);
   const hasEnded = occasion && now > new Date(occasion.end);
 
+  const showDonationToast = (donorName: string, amount: number, charityName: string) => {
+    toast.info(
+      `${donorName} donated $${amount.toLocaleString()} to ${charityName}! 🎉`,
+      { position: "bottom-right", autoClose: 5000 }
+    );
+  };
+
+  const lastDonationDateRef = useRef<Date | null>(null);
+
+  useEffect(() => {
+    if (occasion && occasion.charities) {
+      const allDonations = occasion.charities.flatMap((charity) =>
+        charity.donations?.map((donation) => ({
+          ...donation,
+          charityName: charity.name,
+        })) || []
+      );
+
+      const mostRecentDonation = allDonations
+        .filter((donation) => donation.created_at)
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+
+      if (mostRecentDonation) {
+        const { donor_name, amount, charityName, created_at } = mostRecentDonation;
+
+        if (created_at !== lastDonationDateRef.current) {
+          showDonationToast(donor_name, amount, charityName);
+          lastDonationDateRef.current = created_at; 
+        }
+      }
+    }
+  }, [occasion]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
+       <ToastContainer className="w-11/12 sm:w-auto m-auto sm:m-0" />
       <header className="border-b bg-white/80 backdrop-blur-sm fixed top-0 w-full z-10">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <a href="/" className="flex items-center space-x-2">
@@ -121,20 +139,6 @@ export default function PublicOccasion() {
             Supported Charities
           </h2>
 
-          {!hasEnded && (
-            <p className="text-m sm:text-l m-auto text-center font-semibold text-gray-500 mb-6">
-            Donations are processed by{" "}
-            <a
-              href="https://www.every.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-600 hover:text-green-700"
-            >
-              Every.org
-            </a>.
-          </p>
-          )}
-
           <div className="grid gap-8 sm:gap-6">
             <AnimatePresence mode="wait">
               {occasion.charities.map((charity) => (
@@ -169,108 +173,14 @@ export default function PublicOccasion() {
                     </div>
                   </div>
 
-                  {!hasStarted || hasEnded ? null : (
-                    <AnimatePresence mode="wait">
-                      {expandedCharity === charity._id && (
-                        <motion.form
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          onSubmit={donationForm.handleSubmit(async (data) => {
-                            setIsLoading(true);
-                            try {
-                              // Here you would handle the donation submission logic
-                              // Example: POST the donation data to the server
-                              console.log(data);
-                            } catch (error) {
-                              console.error("Error submitting donation", error);
-                            } finally {
-                              setIsLoading(false);
-                            }
-                          })}
-                          className="space-y-4 border-t pt-6 mt-6"
-                        >
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Your Name
-                            </label>
-                            <input
-                              {...donationForm.register("name")}
-                              className={`w-full px-4 py-2 rounded-lg border transition-colors focus:ring-2 focus:ring-green-500 ${
-                                donationForm.formState.errors.name
-                                  ? "border-red-300 focus:ring-red-500"
-                                  : "border-gray-200"
-                              }`}
-                            />
-                            {donationForm.formState.errors.name && (
-                              <p className="mt-1 text-sm text-red-500">
-                                {donationForm.formState.errors.name.message}
-                              </p>
-                            )}
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Amount
-                            </label>
-                            <input
-                              type="number"
-                              {...donationForm.register("amount", {
-                                valueAsNumber: true,
-                              })}
-                              className={`w-full px-4 py-2 rounded-lg border transition-colors focus:ring-2 focus:ring-green-500 ${
-                                donationForm.formState.errors.amount
-                                  ? "border-red-300 focus:ring-red-500"
-                                  : "border-gray-200"
-                              }`}
-                            />
-                            {donationForm.formState.errors.amount && (
-                              <p className="mt-1 text-sm text-red-500">
-                                {donationForm.formState.errors.amount.message}
-                              </p>
-                            )}
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Message (Optional)
-                            </label>
-                            <textarea
-                              {...donationForm.register("message")}
-                              className="w-full px-4 py-2 rounded-lg border border-gray-200 transition-colors focus:ring-2 focus:ring-green-500"
-                              rows={3}
-                            />
-                          </div>
-
-                          <DonateButton
-                            slug={charity.every_slug}
-                            amount={Number(donationForm.getValues("amount"))}
-                            disabled={
-                              !donationForm.getValues("amount") ||
-                              !donationForm.getValues("name") ||
-                              !!isLoading
-                            }
-                          />
-                        </motion.form>
-                      )}
-                    </AnimatePresence>
-                  )}
-
                   {hasStarted && !hasEnded && (
-                    <button
-                      onClick={() => {
-                        setExpandedCharity(
-                          expandedCharity === charity._id ? null : charity._id ?? null
-                        );
-                        if (expandedCharity === charity._id) {
-                          donationForm.reset();
-                        }
-                      }}
-                      className="mt-4 text-green-600 hover:text-green-700 font-medium text-sm"
+                    <a
+                      href={`${EVERY_DOT_ORG_BASE_URL}/${charity.every_slug}?webhook_token=${EVERY_DOT_ORG_WEBHOOK_KEY}&partner_donation_id=${occasion._id}#donate`}
+                      target="_blank"
+                      className="inline-block mt-4 px-6 py-3 bg-green-700 text-white rounded-full hover:bg-green-600 transition-colors"
                     >
-                      {expandedCharity === charity._id ? "Close" : "Donate Now"}
-                    </button>
+                      Donate Now
+                    </a>
                   )}
                 </motion.div>
               ))}

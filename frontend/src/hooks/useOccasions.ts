@@ -70,7 +70,7 @@ export const useOccasions = (
         url: isEditing ? occasions.find(o => o._id === editingId)?.url : uuidv4(),
         charities: selectedCharities.map((charity: any) => ({
           every_id: charity.ein || charity.every_id,
-          every_slug: charity.slug || charity.every_slug,
+          every_slug: charity.primarySlug || charity.every_slug,
           name: charity.name,
           website: charity.website,
           description: charity.description,

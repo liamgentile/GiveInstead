@@ -1,13 +1,12 @@
 export default interface Stats {
     lifetimeRaised: number;
     topCharity: {
-      name: string;
+      charityName: string;
       amount: number;
-      description: string;
     };
     topOccasion: {
-      name: string;
-      amount: number;
+      occasionName: string;
+      totalAmount: number;
       startDate: Date;
       endDate: Date;
     };

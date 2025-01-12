@@ -13,13 +13,13 @@ export default function Statistics() {
         stats: {
           lifetimeRaised: 0,
           topCharity: {
-            name: "",
+            charityName: "",
             amount: 0,
             description: "",
           },
           topOccasion: {
-            name: "",
-            amount: 0,
+            occasionName: "",
+            totalAmount: 0,
             startDate: new Date(),
             endDate: new Date(),
           },
@@ -71,7 +71,7 @@ export default function Statistics() {
                     animate={{
                       opacity: 1,
                     }}
-                    className="text-3xl font-bold text-gray-900"
+                    className="text-xl font-bold text-gray-900"
                   >
                     ${stats.lifetimeRaised}
                   </motion.p>
@@ -126,13 +126,10 @@ export default function Statistics() {
                     }}
                   >
                     <p className="text-xl font-semibold text-gray-900 mb-1">
-                      {stats.topCharity.name}
+                      {stats.topCharity.charityName}
                     </p>
-                    <p className="text-black-600 font-medium mb-2">
+                    <p className="text-gray-600 font-medium mb-2">
                       ${stats.topCharity.amount}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {stats.topCharity.description}
                     </p>
                   </motion.div>
                 )}
@@ -163,7 +160,7 @@ export default function Statistics() {
                     <div className="h-6 bg-gray-200 rounded animate-pulse" />
                     <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3" />
                   </div>
-                ) : stats.topOccasion.amount === 0 ? (
+                ) : stats.topOccasion.totalAmount === 0 ? (
                   <motion.div
                     initial={{
                       opacity: 0,
@@ -186,10 +183,10 @@ export default function Statistics() {
                     }}
                   >
                     <p className="text-xl font-semibold text-gray-900 mb-1">
-                      {stats.topOccasion.name}
+                      {stats.topOccasion.occasionName}
                     </p>
-                    <p className="text-green-600 font-medium mb-2">
-                      ${stats.topOccasion.amount}
+                    <p className="text-gray-600 font-medium mb-2">
+                      ${stats.topOccasion.totalAmount}
                     </p>
                     <p className="text-sm text-gray-500">
                       {format(stats.topOccasion.startDate, "MMM d")} -{" "}
