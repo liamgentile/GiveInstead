@@ -32,13 +32,13 @@ export class StatsService {
       { $unwind: '$charities.donations' },
       {
         $group: {
-          _id: '$charities._id', // Group by charity ID
+          _id: '$charities._id', 
           amount: { $sum: '$charities.donations.amount' },
           charityName: { $first: '$charities.name' },
         },
       },
-      { $sort: { amount: -1 } }, // Sort descending by totalAmount
-      { $limit: 1 }, // Limit to the top charity
+      { $sort: { amount: -1 } }, 
+      { $limit: 1 },
     ]);
 
     return result.length > 0 ? result[0] : null;
@@ -51,17 +51,17 @@ export class StatsService {
       { $unwind: '$charities.donations' },
       {
         $group: {
-          _id: '$_id', // Group by occasion ID
+          _id: '$_id', 
           totalAmount: { $sum: '$charities.donations.amount' },
           occasionName: { $first: '$name' },
           startDate: { $first: '$start' },
           endDate: { $first: '$end' },
           occasionUrl: { $first: '$url' },
-          charities: { $push: '$charities' }, // Include all charities
+          charities: { $push: '$charities' }, 
         },
       },
-      { $sort: { totalAmount: -1 } }, // Sort descending by totalAmount
-      { $limit: 1 }, // Limit to the most successful occasion
+      { $sort: { totalAmount: -1 } },
+      { $limit: 1 }, 
     ]);
 
     return result.length > 0 ? result[0] : null;

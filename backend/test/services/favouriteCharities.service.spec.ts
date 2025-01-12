@@ -3,6 +3,7 @@ import { FavouriteCharitiesService } from '../../src/favourite-charities/service
 import { CreateFavouriteCharityDto } from '../../src/favourite-charities/dto/createFavouriteCharity.dto';
 import { UpdateFavouriteCharityNoteDto } from '../../src/favourite-charities/dto/updateFavouriteCharityNote.dto';
 import mongoose from 'mongoose';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 const mongooseMock = require('mongoose-mock');
 
 const favouriteCharitySchema = new mongoose.Schema({
@@ -124,5 +125,27 @@ describe('FavouriteCharitiesService', () => {
         expect(e.message).toBe('Charity not found or user does not have access to this charity');
       }
     });
+  });
+
+  describe('findByUser', () => {
+    it('should return favourite charities for a user', async () => {
+      FavouriteCharityMock.find = jest.fn().mockResolvedValue([mockFavouriteCharity]);
+  
+      const result = await service.findByUser('user-123');
+      expect(result).toEqual([mockFavouriteCharity]);
+      expect(FavouriteCharityMock.find).toHaveBeenCalledWith({ clerk_user_id: 'user-123' });
+    });
+  
+    it('should throw an InternalServerErrorException if an error occurs during find', async () => {
+      FavouriteCharityMock.find = jest.fn().mockRejectedValue(new Error('Database error'));
+    
+      try {
+        await service.findByUser('user-123');
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+        expect(e.message).toBe('Error finding favourite charities');
+      }
+    });
+    
   });
 });
