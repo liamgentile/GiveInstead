@@ -1,73 +1,40 @@
-import { User, Gift, Calendar, Share2, CheckCircle } from "lucide-react";
+import {
+  User,
+  Gift,
+  Calendar,
+  Share2,
+  CheckCircle,
+  ChevronDown,
+} from "lucide-react";
 import { useParams } from "react-router-dom";
 import { usePublicOccasion } from "../hooks/usePublicOccasion";
 import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
-import { ToastContainer, toast } from "react-toastify";
-import { useEffect, useRef } from "react";
+import { ToastContainer } from "react-toastify";
 
 export default function PublicOccasion() {
   const { url } = useParams<{ url: string }>();
-
   const EVERY_DOT_ORG_BASE_URL = import.meta.env.VITE_EVERY_DOT_ORG_BASE_URL;
-  const EVERY_DOT_ORG_WEBHOOK_KEY = import.meta.env.VITE_EVERY_DOT_ORG_WEBHOOK_KEY;
+  const EVERY_DOT_ORG_WEBHOOK_KEY = import.meta.env
+    .VITE_EVERY_DOT_ORG_WEBHOOK_KEY;
 
-  const {
-    occasion,
-    totalProgress,
-    hostName,
-    copied,
-    handleShareClick,
-  } = url
+  const { occasion, totalProgress, hostName, copied, handleShareClick, toggleAccordion, hasStarted, hasEnded, expandedCharity } = url
     ? usePublicOccasion(url)
     : {
         occasion: null,
         totalProgress: 0,
         hostName: null,
         copied: false,
+        hasStarted: false,
+        hasEnded: false,
+        expandedCharity: null,
+        toggleAccordion: () => {},
         handleShareClick: () => {},
       };
 
-  const now = new Date();
-  const hasStarted = occasion && now >= new Date(occasion.start);
-  const hasEnded = occasion && now > new Date(occasion.end);
-
-  const showDonationToast = (donorName: string, amount: number, charityName: string) => {
-    toast.info(
-      `${donorName} donated $${amount.toLocaleString()} to ${charityName}! 🎉`,
-      { position: "bottom-right", autoClose: 5000 }
-    );
-  };
-
-  const lastDonationDateRef = useRef<Date | null>(null);
-
-  useEffect(() => {
-    if (occasion && occasion.charities) {
-      const allDonations = occasion.charities.flatMap((charity) =>
-        charity.donations?.map((donation) => ({
-          ...donation,
-          charityName: charity.name,
-        })) || []
-      );
-
-      const mostRecentDonation = allDonations
-        .filter((donation) => donation.created_at)
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
-
-      if (mostRecentDonation) {
-        const { donor_name, amount, charityName, created_at } = mostRecentDonation;
-
-        if (created_at !== lastDonationDateRef.current) {
-          showDonationToast(donor_name, amount, charityName);
-          lastDonationDateRef.current = created_at; 
-        }
-      }
-    }
-  }, [occasion]);
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
-       <ToastContainer className="w-11/12 sm:w-auto m-auto sm:m-0" />
+      <ToastContainer className="w-11/12 sm:w-auto m-auto sm:m-0" />
       <header className="border-b bg-white/80 backdrop-blur-sm fixed top-0 w-full z-10">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <a href="/" className="flex items-center space-x-2">
@@ -181,6 +148,64 @@ export default function PublicOccasion() {
                     >
                       Donate Now
                     </a>
+                  )}
+
+                  {charity.donations && charity.donations.length > 0 && (
+                    <div className="mt-6">
+                      <button
+                        onClick={() => toggleAccordion(charity.every_slug)}
+                        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                      >
+                        <span className="text-sm">Donations</span>
+
+                        <ChevronDown
+                          className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
+                            expandedCharity === charity.every_slug
+                              ? "rotate-180"
+                              : ""
+                          }`}
+                        />
+                      </button>
+
+                      <AnimatePresence>
+                        {expandedCharity === charity.every_slug && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="mt-4 space-y-3 px-1">
+                              {charity.donations.map((donation) => (
+                                <div
+                                  key={donation._id}
+                                  className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                                >
+                                  <span className="font-medium text-sm">
+                                    {donation.donor_name || "Anonymous"}
+                                  </span>
+                                  <div className="flex items-center space-x-4 text-sm">
+                                    <span className="text-gray-700 font-medium">
+                                      ${donation.amount.toLocaleString()}
+                                    </span>
+                                    <span className="text-gray-500">
+                                      {new Date(
+                                        donation.created_at
+                                      ).toLocaleDateString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        year: "numeric",
+                                      })}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   )}
                 </motion.div>
               ))}

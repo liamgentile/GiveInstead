@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { fetchOccasions, createOrUpdateOccasion, deleteOccasion } from "../api/occasions";
+import {
+  fetchOccasions,
+  createOrUpdateOccasion,
+  deleteOccasion,
+} from "../api/occasions";
 import { fetchFavorites } from "../api/fetchFavorites";
 import { fetchCharities } from "../api/fetchCharities";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import Charity from "../interfaces/Charity";
 import Occasion from "../interfaces/Occasion";
 
-export const useOccasions = (
-  userId: string,
-  selectedCharities: Charity[]
-) => {
+export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
   const [occasions, setOccasions] = useState<Occasion[]>([]);
   const [charities, setCharities] = useState<Charity[]>([]);
   const [favorites, setFavorites] = useState<Charity[]>([]);
@@ -19,6 +20,19 @@ export const useOccasions = (
   const [showForm, setShowForm] = useState<Boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [expandedCharity, setExpandedCharity] = useState<string | null>(null);
+
+  const [showArchived, setShowArchived] = useState<Boolean>(false);
+
+  const currentDate = new Date();
+  const activeOccasions = occasions.filter(
+    (occasion) => new Date(occasion.end) > currentDate
+  );
+  const archivedOccasions = occasions.filter(
+    (occasion) => new Date(occasion.end) <= currentDate
+  );
+
+  const displayedOccasions = showArchived ? archivedOccasions : activeOccasions;
 
   const loadOccasions = async () => {
     setIsLoading(true);
@@ -67,7 +81,9 @@ export const useOccasions = (
         type: data.type,
         start: data.start,
         end: data.end,
-        url: isEditing ? occasions.find(o => o._id === editingId)?.url : uuidv4(),
+        url: isEditing
+          ? occasions.find((o) => o._id === editingId)?.url
+          : uuidv4(),
         charities: selectedCharities.map((charity: any) => ({
           every_id: charity.ein || charity.every_id,
           every_slug: charity.primarySlug || charity.every_slug,
@@ -78,7 +94,10 @@ export const useOccasions = (
         })),
       };
 
-      const savedOccasion = await createOrUpdateOccasion(occasionData, isEditing ? editingId : null);
+      const savedOccasion = await createOrUpdateOccasion(
+        occasionData,
+        isEditing ? editingId : null
+      );
 
       if (isEditing) {
         setOccasions((prevOccasions) =>
@@ -117,6 +136,10 @@ export const useOccasions = (
     }
   };
 
+  const toggleAccordion = (charityId: string) => {
+    setExpandedCharity((prev) => (prev === charityId ? null : charityId));
+  };
+
   useEffect(() => {
     if (userId) {
       loadOccasions();
@@ -132,7 +155,7 @@ export const useOccasions = (
         setCharities([]);
       }
     }, 500);
-  
+
     return () => clearTimeout(debounce);
   }, [searchTerm]);
 
@@ -150,5 +173,11 @@ export const useOccasions = (
     setEditingId,
     handleCreateOrUpdateOccasion,
     deleteOccasionHandler,
+    displayedOccasions,
+    showArchived,
+    archivedOccasions,
+    setShowArchived,
+    expandedCharity,
+    toggleAccordion,
   };
 };
