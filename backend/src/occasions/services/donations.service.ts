@@ -8,7 +8,6 @@ import { Occasion } from '../schemas/occasion.schema';
 @Injectable()
 export class DonationService {
   constructor(
-    @InjectModel(Donation.name) private donationModel: Model<Donation>,
     @InjectModel(Occasion.name) private occasionModel: Model<Occasion>,
   ) {}
 
@@ -52,12 +51,12 @@ export class DonationService {
 
     const message = publicTestimony || privateNote || undefined;
 
-    const newDonation = await this.donationModel.create({
-      amount,
+    const newDonation = {
+      amount: Number(amount),
       donor_name: donorName,
       created_at: new Date(),
       message,
-    });
+    };
 
     charity.donations.push(newDonation);
 

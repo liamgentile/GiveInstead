@@ -26,7 +26,7 @@ export class FavouriteCharity {
   @Prop()
   image_url: string;
 
-  @Prop()
+  @Prop({ maxLength: 255 })
   note: string;
 }
 

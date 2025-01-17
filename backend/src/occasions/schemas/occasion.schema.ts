@@ -51,10 +51,10 @@ export class Occasion {
   @Prop({ required: true })
   clerk_user_id: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, minlength: 1, maxlength: 40 })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, minLength: 1, maxLength: 255 })
   description: string;
 
   @Prop({ required: true })
