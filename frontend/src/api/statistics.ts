@@ -47,17 +47,17 @@ export const fetchTopCharity = async (
     const response = await fetch(`${TOP_CHARITY_URL}/${userId}`);
     if (!response.ok) {
       if (response.status === 404) {
-        return { name: "", amount: 0, description: "" };
+        return { charityName: "", amount: 0 };
       }
       throw new Error(
         `Failed to fetch top charity stats: ${response.statusText}`
       );
     }
     const data = await handleJsonResponse<Stats["topCharity"]>(response);
-    return data || { name: "", amount: 0, description: "" };
+    return data || { charityName: "", amount: 0 };
   } catch (error) {
     console.error("Error in fetchTopCharity:", error);
-    return { name: "", amount: 0, description: "" };
+    return { charityName: "", amount: 0 };
   }
 };
 
@@ -69,8 +69,8 @@ export const fetchTopOccasion = async (
     if (!response.ok) {
       if (response.status === 404) {
         return {
-          name: "",
-          amount: 0,
+          occasionName: "",
+          totalAmount: 0,
           startDate: new Date(),
           endDate: new Date(),
         };
@@ -82,15 +82,20 @@ export const fetchTopOccasion = async (
     const data = await handleJsonResponse<Stats["topOccasion"]>(response);
     return (
       data || {
-        name: "",
-        amount: 0,
+        occasionName: "", 
+        totalAmount: 0,
         startDate: new Date(),
         endDate: new Date(),
       }
     );
   } catch (error) {
     console.error("Error in fetchTopOccasion:", error);
-    return { name: "", amount: 0, startDate: new Date(), endDate: new Date() };
+    return {
+      occasionName: "",
+      totalAmount: 0,
+      startDate: new Date(),
+      endDate: new Date(),
+    };
   }
 };
 
@@ -116,13 +121,12 @@ export const fetchAllStats = async (userId: string): Promise<Stats> => {
     return {
       lifetimeRaised: 0,
       topCharity: {
-        name: "",
+        charityName: "",
         amount: 0,
-        description: "",
       },
       topOccasion: {
-        name: "",
-        amount: 0,
+        occasionName: "",
+        totalAmount: 0,
         startDate: new Date(),
         endDate: new Date(),
       },
