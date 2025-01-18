@@ -106,7 +106,7 @@ export default function FavoriteCharities() {
                         defaultValue={charity.note}
                         rows={3}
                         onBlur={(e) =>
-                          handleUpdateNote(charity._id, e.target.value)
+                          handleUpdateNote(charity._id || '', e.target.value)
                         }
                       />
                     </div>
@@ -122,7 +122,7 @@ export default function FavoriteCharities() {
 
                   <div className="flex flex-col sm:flex-row gap-3">
                     <button
-                      onClick={() => setEditingNoteId(charity._id)}
+                      onClick={() => setEditingNoteId(charity._id || '')}
                       className="inline-flex items-center justify-center px-4 py-2 text-sm border border-gray-200 rounded-md hover:bg-gray-50"
                     >
                       <PenSquare size={16} className="mr-2" />
@@ -130,7 +130,7 @@ export default function FavoriteCharities() {
                     </button>
 
                     <button
-                      onClick={() => removeFromFavourites(charity._id)}
+                      onClick={() => removeFromFavourites(charity._id || '')}
                       className="inline-flex items-center justify-center px-4 py-2 text-sm text-red-600 border border-red-200 rounded-md hover:bg-red-50"
                     >
                       <Trash2 size={16} className="mr-2" />

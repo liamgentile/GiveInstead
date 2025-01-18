@@ -64,9 +64,7 @@ export default function Landing() {
         </div>
       </section>
       <footer className="bg-white border-t border-gray-200">
-        <p className="text-gray-600 text-center py-10">
-          2024 GiveInstead.
-        </p>
+        <p className="text-gray-600 text-center py-10">2024 GiveInstead.</p>
       </footer>
     </div>
   );

@@ -428,7 +428,7 @@ export default function Occasions() {
                                       <span className="font-medium text-sm">
                                         {donation.donor_name || "Anonymous"}
                                       </span>
-                                      
+
                                       <div className="flex items-center space-x-4 text-sm">
                                         <span className="text-gray-700 font-medium">
                                           ${donation.amount.toLocaleString()}
