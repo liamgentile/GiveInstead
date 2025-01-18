@@ -72,7 +72,7 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
           (fav) => fav.every_id === charity.every_id
         );
         if (charityToDelete) {
-          await removeFavorite(charityToDelete._id);
+          await removeFavorite(charityToDelete._id || '');
           setFavorites((prev) =>
             prev.filter((fav) => fav.every_id !== charity.every_id)
           );

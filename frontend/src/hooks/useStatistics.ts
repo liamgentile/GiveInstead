@@ -8,13 +8,12 @@ export const useStatistics = (userId: string) => {
   const [stats, setStats] = useState<Stats>({
     lifetimeRaised: 0,
     topCharity: {
-      name: "",
+      charityName: "",
       amount: 0,
-      description: "",
     },
     topOccasion: {
-      name: "",
-      amount: 0,
+      occasionName: "",
+      totalAmount: 0,
       startDate: new Date(),
       endDate: new Date(),
     },
