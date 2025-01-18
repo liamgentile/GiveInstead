@@ -3,25 +3,25 @@ import Charity from "../interfaces/Charity";
 export const featuredCharities: Charity[] = [
     {
       _id: '',
-      every_id: "822281466",
-      every_slug: "wildanimalinitiative",
-      name: "Wild Animal Initiative",
+      every_id: "364887167",
+      every_slug: "food-for-life-global-americas-inc",
+      name: "Food For Life Global - Americas Inc",
       description:
-        "We are dedicated to finding evidence-backed ways to improve the lives of animals in the wild.  We depend on individual donors to help us make life better for wild animals. To a small nonprofit working hard on a big problem, your support is more crucial now than ever!",
+        "The world's largest vegan food relief network with over 260 charity projects in 60 countries",
       image_url:
-        "https://res.cloudinary.com/everydotorg/image/upload/f_auto,c_limit,w_1920,q_auto/profile_pics/ap5t5cjcylr7xktnldno",
-      website: "https://wildanimalinitiative.org",
+        "https://res.cloudinary.com/everydotorg/image/upload/f_auto,c_limit,w_3840,q_80/profile_pics/bqpnyxim0yk8cuqw9s6a",
+      website: "https://ffl.org/",
     },
     {
       _id: '',
-      every_id: "873020380",
-      every_slug: "aquatic-life-institute",
-      name: "Aquatic Life Institute",
+      every_id: "810840578",
+      every_slug: "gfi",
+      name: "The Good Food Institute",
       description:
-        "Aquatic Life Institute was formed to specifically advance animal welfare for the nearly 500 billion farmed fish and shrimp, and 2-3 trillion wild aquatic animals in the global food system.",
+        "Developing the roadmap for a sustainable, secure, and just global protein supply 🧫🌱",
       image_url:
-        "https://res.cloudinary.com/everydotorg/image/upload/f_auto,c_limit,w_1920,q_auto/profile_pics/kbfxjmzl39rlrs4nxnp3",
-      website: "https://ali.fish",
+        "https://res.cloudinary.com/everydotorg/image/upload/f_auto,c_limit,w_3840,q_80/food_s7jfu8",
+      website: "http://www.gfi.org",
     },
     {
       _id: '',

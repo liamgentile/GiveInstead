@@ -121,7 +121,7 @@ export default function PublicOccasion() {
           </h2>
 
           <div className="grid gap-8 sm:gap-6">
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
               {occasion.charities.map((charity) => (
                 <motion.div
                   key={charity._id}

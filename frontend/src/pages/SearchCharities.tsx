@@ -131,6 +131,7 @@ export default function SearchCharities() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredCharities.map((charity) => (
             <motion.div
+              key={charity.every_id}
               onClick={() => {
                 setSelectedCharity(charity);
                 setIsModalOpen(true);
