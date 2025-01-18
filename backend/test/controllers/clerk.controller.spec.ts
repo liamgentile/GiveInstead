@@ -8,16 +8,13 @@ describe('ClerkController', () => {
   let service: ClerkService;
   let loggerSpy: jest.SpyInstance;
 
-  // Create mock service
   const mockClerkService = {
     getUserName: jest.fn(),
   };
 
   beforeEach(async () => {
-    // Reset all mocks before each test
     jest.clearAllMocks();
 
-    // Create spy on Logger before initializing the controller
     loggerSpy = jest
       .spyOn(Logger.prototype, 'error')
       .mockImplementation(() => {});
