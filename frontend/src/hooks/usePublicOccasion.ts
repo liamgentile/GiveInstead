@@ -12,7 +12,6 @@ export const usePublicOccasion = (url: string) => {
   const [copied, setCopied] = useState<Boolean>(false);
   const lastDonationDateRef = useRef<Date | null>(null);
 
-
   useEffect(() => {
     if (occasion) {
       const total = occasion.charities.reduce((acc, charity) => {
@@ -74,7 +73,6 @@ export const usePublicOccasion = (url: string) => {
   const toggleAccordion = (charityId: string) => {
     setExpandedCharity((prev) => (prev === charityId ? null : charityId));
   };
-
 
   useEffect(() => {
     if (occasion && occasion.charities) {

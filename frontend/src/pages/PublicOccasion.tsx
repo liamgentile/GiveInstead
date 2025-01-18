@@ -18,7 +18,17 @@ export default function PublicOccasion() {
   const EVERY_DOT_ORG_WEBHOOK_KEY = import.meta.env
     .VITE_EVERY_DOT_ORG_WEBHOOK_KEY;
 
-  const { occasion, totalProgress, hostName, copied, handleShareClick, toggleAccordion, hasStarted, hasEnded, expandedCharity } = url
+  const {
+    occasion,
+    totalProgress,
+    hostName,
+    copied,
+    handleShareClick,
+    toggleAccordion,
+    hasStarted,
+    hasEnded,
+    expandedCharity,
+  } = url
     ? usePublicOccasion(url)
     : {
         occasion: null,
@@ -34,7 +44,9 @@ export default function PublicOccasion() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
-      <ToastContainer className="w-11/12 sm:w-auto m-auto sm:m-0" />
+      {!hasEnded && (
+        <ToastContainer className="w-11/12 sm:w-auto m-auto sm:m-0" />
+      )}
       <header className="border-b bg-white/80 backdrop-blur-sm fixed top-0 w-full z-10">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <a href="/" className="flex items-center space-x-2">
@@ -66,7 +78,9 @@ export default function PublicOccasion() {
               {occasion.name}
             </h1>
             <p className="text-gray-600 mb-6 text-m sm:text-xl">
-              {occasion.description}
+              {hasEnded
+                ? "This event has ended.  Thank you!"
+                : occasion.description}
             </p>
 
             <div className="flex flex-wrap gap-4 text-sm sm:text-l text-gray-500">
