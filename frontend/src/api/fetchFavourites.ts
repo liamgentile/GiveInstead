@@ -7,6 +7,7 @@ export const fetchFavourites = async (userId: string) => {
   );
 
   if (response.status === 304) {
+    console.log("304 condition hit");
     return []; 
   }
 

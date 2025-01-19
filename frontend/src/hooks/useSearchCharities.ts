@@ -17,6 +17,7 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
       setIsLoading(true);
       try {
         const data = await fetchFavourites(userId);
+        console.log(data);
         setFavorites(data);
       } catch (err) {
         setError("Failed to load favourites");
