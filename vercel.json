@@ -20,7 +20,7 @@
       "destination": "/backend/src/main.ts"
     },
     {
-      "source": "/((?!api/.*|everydotorg/donation).*)",
+      "source": "/(.*)",
       "destination": "/frontend/index.html"
     }
   ]
