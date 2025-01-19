@@ -16,8 +16,7 @@ export class ClerkService {
       } else if (response.username) {
         return response.username;
       } else {
-        this.logger.error('User name not available');
-        throw new Error('User name is not available');
+        return 'Anonymous user';
       }
     } catch (error) {
       this.logger.error('Failed to fetch user from Clerk', error.stack);

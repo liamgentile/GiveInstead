@@ -78,7 +78,7 @@ describe('ClerkService', () => {
       expect(clerkClient.users.getUser).toHaveBeenCalledWith(clerkUserId);
     });
 
-    it('should throw error when no name fields are available', async () => {
+    it('should return anonymous user when no name fields are available', async () => {
       const mockUser = {
         firstName: '',
         lastName: '',
@@ -87,10 +87,8 @@ describe('ClerkService', () => {
 
       (clerkClient.users.getUser as jest.Mock).mockResolvedValue(mockUser);
 
-      await expect(service.getUserName(clerkUserId)).rejects.toThrow(
-        'Failed to fetch user from Clerk',
-      );
-      expect(loggerSpy).toHaveBeenCalledWith('User name not available');
+      const result = await service.getUserName(clerkUserId);
+      expect(result).toBe('Anonymous user');
     });
 
     it('should throw error when Clerk API call fails', async () => {
