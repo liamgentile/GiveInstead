@@ -19,7 +19,7 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
         const data = await fetchFavourites(userId);
         setFavorites(data);
       } catch (err) {
-        setError("Failed to load favourites");
+        setError(`Failed to load favourites ${(err as Error).message}`);
       } finally {
         setIsLoading(false);
       }
