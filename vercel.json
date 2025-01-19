@@ -12,20 +12,20 @@
   ],
   "rewrites": [
     {
-      "source": "/everydotorg/donation",
-      "destination": "/backend/everydotorg/donation"
-    },
-    {
       "source": "/api/(.*)",
       "destination": "/backend/$1"
     },
     {
+      "source": "/everydotorg/donation",
+      "destination": "/backend/everydotorg/donation"
+    },
+    {
       "source": "/frontend/(.*)",
-      "destination": "/frontend/$1"
+      "destination": "/frontend/index.html"
     },
     {
       "source": "/(.*)",
-      "destination": "/frontend/index.html"
+      "destination": "/frontend/$1"
     }
   ]
 }
