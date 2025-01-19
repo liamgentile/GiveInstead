@@ -13,7 +13,7 @@ import { OccasionService } from '../services/occasions.service';
 import { OccasionDto } from '../dto/occasion.dto';
 import { Occasion } from '../schemas/occasion.schema';
 
-@Controller('occasions')
+@Controller('api/occasions')
 export class OccasionController {
   private readonly logger = new Logger(OccasionController.name);
 

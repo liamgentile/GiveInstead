@@ -2,7 +2,7 @@ import { Controller, Get, Param, Logger } from '@nestjs/common';
 import { Charity, Occasion } from '../schemas/occasion.schema';
 import { StatsService } from '../services/stats.service';
 
-@Controller('stats')
+@Controller('api/stats')
 export class StatsController {
   private readonly logger = new Logger(StatsController.name);
 

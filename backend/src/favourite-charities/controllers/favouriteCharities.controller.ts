@@ -15,7 +15,7 @@ import { UpdateFavouriteCharityNoteDto } from '../dto/updateFavouriteCharityNote
 import { FavouriteCharity } from '../schemas/favouriteCharity.schema';
 
 @Injectable()
-@Controller('favourite-charity')
+@Controller('api/favourite-charity')
 export class FavouriteCharityController {
   private readonly logger = new Logger(FavouriteCharityController.name);
 
