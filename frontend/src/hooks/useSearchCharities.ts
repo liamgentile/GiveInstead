@@ -26,7 +26,6 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
     };
 
     loadFavorites();
-
   }, [userId]);
 
   useEffect(() => {
@@ -56,9 +55,9 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
 
   useEffect(() => {
     if (isModalOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
   }, [isModalOpen]);
 
@@ -72,7 +71,7 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
           (fav) => fav.every_id === charity.every_id
         );
         if (charityToDelete) {
-          await removeFavorite(charityToDelete._id || '');
+          await removeFavorite(charityToDelete._id || "");
           setFavorites((prev) =>
             prev.filter((fav) => fav.every_id !== charity.every_id)
           );
