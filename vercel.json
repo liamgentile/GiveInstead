@@ -20,11 +20,11 @@
       "destination": "/backend/$1"
     },
     {
-      "source": "/(.*)",
+      "source": "/frontend/(.*)",
       "destination": "/frontend/$1"
     },
     {
-      "source": "/frontend/(.*)",
+      "source": "/(.*)",
       "destination": "/frontend/index.html"
     }
   ]
