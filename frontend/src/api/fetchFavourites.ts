@@ -10,5 +10,9 @@ export const fetchFavourites = async (userId: string) => {
     throw new Error("Failed to fetch favourites");
   }
 
+  if (response.status === 304) {
+    return []; 
+  }
+
   return response.json();
 };
