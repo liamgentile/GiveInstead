@@ -82,7 +82,7 @@ export const fetchTopOccasion = async (
     const data = await handleJsonResponse<Stats["topOccasion"]>(response);
     return (
       data || {
-        occasionName: "", 
+        occasionName: "",
         totalAmount: 0,
         startDate: new Date(),
         endDate: new Date(),

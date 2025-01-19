@@ -54,7 +54,7 @@ export const fetchOccasionByUrl = async (
   url: string
 ): Promise<OccasionWithHostName> => {
   const response = await fetch(`${OCCASIONS_BASE_URL}/url/${url}`);
-  
+
   if (!response.ok) {
     throw new Error("Failed to fetch occasion data");
   }
