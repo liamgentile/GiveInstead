@@ -22,14 +22,17 @@ async function bootstrap() {
   return app;
 }
 
-export default async function handler(req: IncomingMessage, res: ServerResponse) {
+export default async function handler(
+  req: IncomingMessage,
+  res: ServerResponse,
+) {
   const app = await bootstrap();
   const httpAdapter = app.getHttpAdapter();
   return httpAdapter.getInstance()(req, res);
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  bootstrap().then(app => {
+  bootstrap().then((app) => {
     app.listen(3000);
   });
 }
