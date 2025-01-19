@@ -7,7 +7,6 @@ import {
   Delete,
   Logger,
   Injectable,
-  ValueProvider,
 } from '@nestjs/common';
 import { FavouriteCharitiesService } from '../services/favouriteCharities.service';
 import { CreateFavouriteCharityDto } from '../dto/createFavouriteCharity.dto';
