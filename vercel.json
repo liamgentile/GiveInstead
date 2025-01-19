@@ -17,7 +17,7 @@
     },
     {
       "source": "/api/(.*)",
-      "destination": "/backend/$1"
+      "destination": "/api/$1"
     },
     {
         "source": "/(.*)",
