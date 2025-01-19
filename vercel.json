@@ -10,17 +10,15 @@
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/everydotorg/donation",
-      "destination": "/backend/everydotorg/donation"
+      "src": "/everydotorg/donation",
+      "dest": "/backend/everydotorg/donation"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/backend/$1"
-    }
-  ],
-  "routes": [
+      "src": "/api/(.*)",
+      "dest": "/backend/$1"
+    },
     {
       "handle": "filesystem"
     },
