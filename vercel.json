@@ -20,8 +20,8 @@
       "destination": "/backend/everydotorg/donation"
     },
     {
-      "source": "/frontend/(.*)",
-      "destination": "/frontend/index.html"
+      "source": "/((?!frontend/).*)",
+      "destination": "/frontend/$1"
     },
     {
       "source": "/(.*)",
