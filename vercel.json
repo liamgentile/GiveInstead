@@ -21,7 +21,7 @@
     },
     {
       "source": "/((?!api/.*|everydotorg/donation).*)",
-      "destination": "/frontend/package.json"
+      "destination": "/frontend/index.html"
     }
   ]
 }
