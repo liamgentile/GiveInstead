@@ -20,7 +20,9 @@ export class OccasionController {
   constructor(private readonly occasionService: OccasionService) {}
 
   @Post()
-  async createOccasion(@Body() createOccasionDto: OccasionDto): Promise<Occasion> {
+  async createOccasion(
+    @Body() createOccasionDto: OccasionDto,
+  ): Promise<Occasion> {
     try {
       return await this.occasionService.createOccasion(createOccasionDto);
     } catch (error) {
@@ -53,7 +55,9 @@ export class OccasionController {
   }
 
   @Get(':clerkUserId')
-  async findByUser(@Param('clerkUserId') clerkUserId: string): Promise<Occasion[]> {
+  async findByUser(
+    @Param('clerkUserId') clerkUserId: string,
+  ): Promise<Occasion[]> {
     try {
       const occasions = await this.occasionService.findByUser(clerkUserId);
       if (!occasions || occasions.length === 0) {
