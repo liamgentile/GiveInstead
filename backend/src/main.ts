@@ -7,7 +7,7 @@ async function bootstrap() {
 
   const corsOrigin =
     process.env.NODE_ENV === 'production'
-      ? port
+      ? process.env.FRONTEND_PRODUCTION_URL
       : process.env.FRONTEND_LOCALHOST;
 
   app.enableCors({
@@ -15,6 +15,8 @@ async function bootstrap() {
     methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
   });
 
-  await app.listen(port);
+  if (process.env.NODE_ENV !== 'production') {
+    await app.listen(3000);
+  }
 }
 bootstrap();
