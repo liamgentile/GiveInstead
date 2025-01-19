@@ -20,7 +20,7 @@
       "destination": "/backend/src/main.ts"
     },
     {
-      "source": "/.*",
+      "source": "/(.*)",
       "destination": "/frontend/index.html"
     }
   ]
