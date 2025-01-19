@@ -6,8 +6,8 @@ export const fetchFavorites = async (userId: string) => {
     `${FETCH_FAVOURITE_CHARITIES_API_URL}/${userId}`
   );
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch favorites");
+  if (!response.ok && response.status !== 304) {
+    throw new Error("Failed to fetch favourites");
   }
 
   return response.json();
