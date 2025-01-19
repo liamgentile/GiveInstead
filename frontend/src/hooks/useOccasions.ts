@@ -50,7 +50,10 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
     setIsLoading(true);
     try {
       const data = await fetchFavourites(userId);
-      setFavorites(data);
+      
+      if (data.length > 0) {
+        setFavorites(data);
+      }
     } catch (err) {
       setError("Failed to load favourites");
     } finally {
