@@ -13,15 +13,15 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/backend/src/main.ts"
+      "destination": "backend/src/main.ts"
     },
     {
       "source": "/everydotorg/donation",
-      "destination": "/backend/src/main.ts"
+      "destination": "backend/src/main.ts"
     },
     {
       "source": "/((?!api/.*|everydotorg/donation).*)",
-      "destination": "/frontend/index.html"
+      "destination": "frontend/index.html"
     }
   ]
 }
