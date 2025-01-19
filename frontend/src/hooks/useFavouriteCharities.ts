@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Charity from "../interfaces/Charity";
-import { fetchFavorites } from "../api/fetchFavourites";
+import { fetchFavourites } from "../api/fetchFavourites";
 import { removeFavorite, updateNote } from "../api/updateFavouriteCharities";
 
 export const useFavouriteCharities = (userId: string) => {
@@ -13,10 +13,10 @@ export const useFavouriteCharities = (userId: string) => {
     const loadFavorites = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchFavorites(userId);
+        const data = await fetchFavourites(userId);
         setFavorites(data);
       } catch (err) {
-        setError("Failed to load favorites");
+        setError("Failed to load favourites");
       } finally {
         setIsLoading(false);
       }
