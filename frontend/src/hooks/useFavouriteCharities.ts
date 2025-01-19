@@ -14,10 +14,7 @@ export const useFavouriteCharities = (userId: string) => {
       setIsLoading(true);
       try {
         const data = await fetchFavourites(userId);
-        
-        if (data.length > 0) {
-          setFavorites(data);
-        }
+        setFavorites(data);
       } catch (err) {
         setError("Failed to load favourites");
       } finally {
