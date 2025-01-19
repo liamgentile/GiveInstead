@@ -3,7 +3,12 @@ const FETCH_FAVOURITE_CHARITIES_API_URL = import.meta.env
 
 export const fetchFavourites = async (userId: string) => {
   const response = await fetch(
-    `${FETCH_FAVOURITE_CHARITIES_API_URL}/${userId}`
+    `${FETCH_FAVOURITE_CHARITIES_API_URL}/${userId}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+    }
   );
 
   if (response.status === 304) {
