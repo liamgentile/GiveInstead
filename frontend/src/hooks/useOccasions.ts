@@ -4,7 +4,7 @@ import {
   createOrUpdateOccasion,
   deleteOccasion,
 } from "../api/occasions";
-import { fetchFavorites } from "../api/fetchFavorites";
+import { fetchFavourites } from "../api/fetchFavourites";
 import { fetchCharities } from "../api/fetchCharities";
 import { v4 as uuidv4 } from "uuid";
 import Charity from "../interfaces/Charity";
@@ -49,10 +49,10 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
   const loadFavorites = async () => {
     setIsLoading(true);
     try {
-      const data = await fetchFavorites(userId);
+      const data = await fetchFavourites(userId);
       setFavorites(data);
     } catch (err) {
-      setError("Failed to load favorites");
+      setError("Failed to load favourites");
     } finally {
       setIsLoading(false);
     }
