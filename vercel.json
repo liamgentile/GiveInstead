@@ -2,18 +2,26 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/package.json",
+      "src": "/frontend/dist/*",
       "use": "@vercel/static-build"
     },
     {
-      "src": "backend/package.json",
+      "src": "/backend/src/main.ts",
       "use": "@vercel/node"
     }
   ],
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "/backend/src/main.ts"
+    },
+    {
+      "source": "/everydotorg/donation",
+      "destination": "/backend/src/main.ts"
+    },
+    {
       "source": "/((?!api/.*|everydotorg/donation).*)",
-      "destination": "/frontend/index.html"
+      "destination": "/frontend/dist/*"
     }
   ]
 }
