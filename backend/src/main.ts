@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { INestApplication } from '@nestjs/common';
+import { IncomingMessage, ServerResponse } from 'http';
 
-let app: INestApplication<any>;
+let app: INestApplication;
 
 async function bootstrap() {
   if (!app) {
@@ -21,7 +22,7 @@ async function bootstrap() {
   return app;
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: IncomingMessage, res: ServerResponse) {
   const app = await bootstrap();
   const httpAdapter = app.getHttpAdapter();
   return httpAdapter.getInstance()(req, res);
