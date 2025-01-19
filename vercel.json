@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "/frontend/dist/*",
+      "src": "/frontend/dist/index.html",
       "use": "@vercel/static-build"
     },
     {
@@ -21,7 +21,7 @@
     },
     {
       "source": "/((?!api/.*|everydotorg/donation).*)",
-      "destination": "/frontend/dist/*"
+      "destination": "/frontend/dist/index.html"
     }
   ]
 }
