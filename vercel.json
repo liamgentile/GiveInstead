@@ -7,10 +7,7 @@
     },
     {
       "src": "backend/src/main.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
+      "use": "@vercel/node"
     }
   ],
   "rewrites": [
