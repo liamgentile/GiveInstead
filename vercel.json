@@ -16,6 +16,14 @@
       "destination": "/backend/$1"
     },
     {
+      "source": "/_next/static/(.*)",
+      "destination": "/_next/static/$1"
+    },
+    {
+      "source": "/(.*\\.js|.*\\.css|.*\\.svg|.*\\.png|.*\\.jpg|.*\\.woff|.*\\.woff2|.*\\.ttf|.*\\.eot)",
+      "destination": "/frontend/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/frontend/index.html"
     }
