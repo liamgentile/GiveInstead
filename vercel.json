@@ -1,23 +1,13 @@
 {
   "version": 2,
-  "projects": [
+  "rewrites": [
     {
-      "name": "frontend",
-      "path": "frontend"
+      "source": "/api/(.*)",
+      "destination": "/backend/$1"
     },
     {
-      "name": "backend",
-      "path": "backend"
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
     }
-  ],
-    "rewrites": [
-      {
-        "source": "/api/(.*)",
-        "destination": "/backend/$1"
-      },
-      {
-        "source": "/(.*)",
-        "destination": "/frontend/$1"
-      }
-    ]
+  ]
 }
