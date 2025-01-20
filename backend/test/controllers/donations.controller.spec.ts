@@ -19,7 +19,7 @@ describe('DonationController', () => {
     toNonprofit: {
       slug: 'nonprofit-slug',
       ein: '12-3456789',
-      name: 'Test Nonprofit'
+      name: 'Test Nonprofit',
     },
     amount: '100.00',
     netAmount: '95.00',
@@ -28,18 +28,18 @@ describe('DonationController', () => {
     publicTestimony: 'Great cause!',
     privateNote: undefined,
     fromFundraiser: undefined,
-    paymentMethod: 'card'
+    paymentMethod: 'card',
   };
 
   const mockDonation: Donation = {
     amount: 100,
     donor_name: 'John Doe',
     created_at: new Date(),
-    message: 'Great cause!'
+    message: 'Great cause!',
   };
 
   const mockDonationService = {
-    createDonation: jest.fn()
+    createDonation: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -48,9 +48,9 @@ describe('DonationController', () => {
       providers: [
         {
           provide: DonationService,
-          useValue: mockDonationService
-        }
-      ]
+          useValue: mockDonationService,
+        },
+      ],
     }).compile();
 
     controller = module.get<DonationController>(DonationController);
@@ -72,7 +72,9 @@ describe('DonationController', () => {
       const result = await controller.createDonation(mockWebhookDto);
 
       expect(result).toEqual(mockDonation);
-      expect(donationService.createDonation).toHaveBeenCalledWith(mockWebhookDto);
+      expect(donationService.createDonation).toHaveBeenCalledWith(
+        mockWebhookDto,
+      );
       expect(donationService.createDonation).toHaveBeenCalledTimes(1);
     });
 
@@ -82,7 +84,7 @@ describe('DonationController', () => {
         lastName: undefined,
         publicTestimony: undefined,
         partnerMetadata: undefined,
-        fromFundraiser: undefined
+        fromFundraiser: undefined,
       };
 
       mockDonationService.createDonation.mockResolvedValue(mockDonation);
@@ -90,7 +92,9 @@ describe('DonationController', () => {
       const result = await controller.createDonation(dtoWithMissingFields);
 
       expect(result).toEqual(mockDonation);
-      expect(donationService.createDonation).toHaveBeenCalledWith(dtoWithMissingFields);
+      expect(donationService.createDonation).toHaveBeenCalledWith(
+        dtoWithMissingFields,
+      );
     });
 
     it('should handle error from service', async () => {
@@ -99,16 +103,23 @@ describe('DonationController', () => {
 
       const loggerSpy = jest.spyOn(Logger.prototype, 'error');
 
-      await expect(controller.createDonation(mockWebhookDto)).rejects.toThrow(error);
+      await expect(controller.createDonation(mockWebhookDto)).rejects.toThrow(
+        error,
+      );
 
-      expect(loggerSpy).toHaveBeenCalledWith('Error creating donation', error.stack);
-      expect(donationService.createDonation).toHaveBeenCalledWith(mockWebhookDto);
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Error creating donation',
+        error.stack,
+      );
+      expect(donationService.createDonation).toHaveBeenCalledWith(
+        mockWebhookDto,
+      );
     });
 
     it('should handle monthly donations', async () => {
       const monthlyDto: EveryDotOrgWebhookDto = {
         ...mockWebhookDto,
-        frequency: 'Monthly'
+        frequency: 'Monthly',
       };
 
       mockDonationService.createDonation.mockResolvedValue(mockDonation);
@@ -123,20 +134,24 @@ describe('DonationController', () => {
       const dtoWithoutMessage: EveryDotOrgWebhookDto = {
         ...mockWebhookDto,
         publicTestimony: undefined,
-        privateNote: undefined
+        privateNote: undefined,
       };
 
       const donationWithoutMessage: Donation = {
         ...mockDonation,
-        message: undefined
+        message: undefined,
       };
 
-      mockDonationService.createDonation.mockResolvedValue(donationWithoutMessage);
+      mockDonationService.createDonation.mockResolvedValue(
+        donationWithoutMessage,
+      );
 
       const result = await controller.createDonation(dtoWithoutMessage);
 
       expect(result).toEqual(donationWithoutMessage);
-      expect(donationService.createDonation).toHaveBeenCalledWith(dtoWithoutMessage);
+      expect(donationService.createDonation).toHaveBeenCalledWith(
+        dtoWithoutMessage,
+      );
     });
   });
 });
