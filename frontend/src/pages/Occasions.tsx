@@ -169,7 +169,7 @@ export default function Occasions() {
                   <option value="other">Other</option>
                 </select>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="relative">
                     <Calendar
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -276,38 +276,41 @@ export default function Occasions() {
                   </motion.div>
                 )}
 
-                <motion.div layout className="space-y-4">
-                  <h3 className="font-medium text-gray-900 flex items-center gap-2">
-                    <Heart size={16} className="text-red-500" />
-                    Favorite Charities
-                  </h3>
-                  <div className="grid gap-3">
-                    {favorites.map((charity) => (
-                      <CharityCard
-                        key={charity.every_id}
-                        charity={charity}
-                        onSelect={() => {
-                          setSelectedCharities((prev) => {
-                            if (
-                              prev.find((c) => c.every_id === charity.every_id)
-                            ) {
-                              return prev.filter(
-                                (c) => c.every_id !== charity.every_id
-                              );
-                            } else {
-                              return [...prev, charity];
-                            }
-                          });
-                        }}
-                        isSelected={selectedCharities.some(
-                          (c) => c.every_id === charity.every_id
-                        )}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
+                {favorites.length > 0 && (
+                  <motion.div layout className="space-y-4">
+                    <h3 className="font-medium text-gray-900 flex items-center gap-2">
+                      <Heart size={16} className="text-red-500" />
+                      Favorite Charities
+                    </h3>
+                    <div className="grid gap-3">
+                      {favorites.map((charity: Charity) => (
+                        <CharityCard
+                          key={charity.every_id}
+                          charity={charity}
+                          onSelect={() => {
+                            setSelectedCharities((prev) => {
+                              if (
+                                prev.find(
+                                  (c) => c.every_id === charity.every_id
+                                )
+                              ) {
+                                return prev.filter(
+                                  (c) => c.every_id !== charity.every_id
+                                );
+                              } else {
+                                return [...prev, charity];
+                              }
+                            });
+                          }}
+                          isSelected={selectedCharities.some(
+                            (c) => c.every_id === charity.every_id
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
 
-                {/* Selected Charities Section */}
                 <motion.div layout className="space-y-4">
                   <h3 className="font-medium text-gray-900 flex items-center gap-2 mt-8">
                     <HandHeart size={16} className="text-purple-500" />
@@ -326,7 +329,7 @@ export default function Occasions() {
                               )
                             );
                           }}
-                          isSelected={true} // Always selected since it's in the selectedCharities list
+                          isSelected={true} 
                         />
                       ))}
                     </div>
