@@ -1,23 +1,23 @@
 {
   "version": 2,
-  "builds": [
+  "projects": [
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static"
+      "name": "frontend",
+      "path": "frontend"
     },
     {
-      "src": "backend/dist/main.js",
-      "use": "@vercel/node"
+      "name": "backend",
+      "path": "backend"
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/src/main.ts"
-    },
-    {
-      "src": "/[^.]+",
-      "dest": "frontend/index.html"
-    }
-  ]
+    "rewrites": [
+      {
+        "source": "/api/(.*)",
+        "destination": "/backend/$1"
+      },
+      {
+        "source": "/(.*)",
+        "destination": "/frontend/$1"
+      }
+    ]
 }
