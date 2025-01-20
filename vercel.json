@@ -17,8 +17,11 @@
     },
     {
       "src": "/everydotorg/donation",
-      "dest": "backend/$1"
+      "dest": "backend/everydotorg/donation"
     },
+    {
+        "handle": "filesystem"
+      },
     {
       "src": "/(.*)",
       "dest": "frontend/$1"
