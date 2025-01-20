@@ -16,6 +16,10 @@
       "destination": "/backend/src/main.ts"
     },
     {
+      "source": "/(.*\\.js|.*\\.css|.*\\.svg|.*\\.png|.*\\.jpg|.*\\.woff|.*\\.woff2|.*\\.ttf|.*\\.eot)",
+      "destination": "/frontend/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/frontend/index.html"
     }
