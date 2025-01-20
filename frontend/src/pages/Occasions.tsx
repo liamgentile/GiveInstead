@@ -169,8 +169,9 @@ export default function Occasions() {
                   <option value="other">Other</option>
                 </select>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="relative">
+                    start
                     <Calendar
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                       size={20}
@@ -182,6 +183,7 @@ export default function Occasions() {
                     />
                   </div>
                   <div className="relative">
+                    end
                     <Calendar
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                       size={20}
@@ -329,7 +331,7 @@ export default function Occasions() {
                               )
                             );
                           }}
-                          isSelected={true} 
+                          isSelected={true}
                         />
                       ))}
                     </div>
