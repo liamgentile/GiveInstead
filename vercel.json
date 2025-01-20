@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend && npm install && npm run build && cd ../backend && npm install && npm run build",
-  "outputDirectory": "frontend/dist",
   "builds": [
     {
       "src": "frontend/package.json",
@@ -15,11 +13,11 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/dist/main.js"
+      "dest": "backend/src/main.ts"
     },
     {
-      "src": "/(.*)",
-      "dest": "frontend/dist/$1"
+      "src": "/[^.]+",
+      "dest": "frontend/index.html"
     }
   ]
 }
