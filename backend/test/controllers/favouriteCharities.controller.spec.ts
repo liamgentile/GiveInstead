@@ -78,7 +78,7 @@ describe('FavouriteCharityController', () => {
 
       mockFavouriteCharitiesService.create.mockRejectedValue(
         new Error('Creation failed'),
-      ); 
+      );
 
       await expect(
         controller.create(createFavouriteCharityDto),
@@ -95,7 +95,7 @@ describe('FavouriteCharityController', () => {
 
       mockFavouriteCharitiesService.updateNote.mockResolvedValue(
         updateFavouriteCharityNoteDto,
-      ); 
+      );
 
       const result = await controller.updateNote(updateFavouriteCharityNoteDto);
       expect(result).toEqual(updateFavouriteCharityNoteDto);
@@ -112,7 +112,7 @@ describe('FavouriteCharityController', () => {
 
       mockFavouriteCharitiesService.updateNote.mockRejectedValue(
         new Error('Update failed'),
-      ); 
+      );
 
       await expect(
         controller.updateNote(updateFavouriteCharityNoteDto),
@@ -127,7 +127,7 @@ describe('FavouriteCharityController', () => {
 
       mockFavouriteCharitiesService.findByUser.mockResolvedValue(
         favouriteCharities,
-      ); 
+      );
 
       const result = await controller.findByUser(clerkUserId);
       expect(result).toEqual(favouriteCharities);
@@ -141,7 +141,7 @@ describe('FavouriteCharityController', () => {
 
       mockFavouriteCharitiesService.findByUser.mockRejectedValue(
         new Error('Find by user failed'),
-      ); 
+      );
 
       await expect(controller.findByUser(clerkUserId)).rejects.toThrow(
         'Find by user failed',
@@ -164,7 +164,7 @@ describe('FavouriteCharityController', () => {
 
       mockFavouriteCharitiesService.remove.mockRejectedValue(
         new Error('Remove failed'),
-      ); 
+      );
 
       await expect(controller.remove(id)).rejects.toThrow('Remove failed');
     });

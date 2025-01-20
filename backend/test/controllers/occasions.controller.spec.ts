@@ -8,45 +8,47 @@ import mongoose from 'mongoose';
 const mongooseMock = require('mongoose-mock');
 
 const occasionSchema = new mongoose.Schema({
-    name: String,
-    description: String,
-    type: String,
-    clerk_user_id: String,
-    url: String,
-    start: Date,
-    end: Date,
-    charities: [{
+  name: String,
+  description: String,
+  type: String,
+  clerk_user_id: String,
+  url: String,
+  start: Date,
+  end: Date,
+  charities: [
+    {
       every_id: String,
       name: String,
       donations: Array,
-    }],
-  });
-  
-  const Occasion = mongooseMock.model('Occasion', occasionSchema);
-  
-  const mockCharity = {
-    every_id: 'charity-id',
-    every_slug: 'charity-slug',
-    name: 'Charity Name',
-    website: 'https://charity.example',
-    description: 'A great cause.',
-    image_url: 'https://charity.example/logo.png',
-    donations: [],
-  };
-  
-  const mockOccasions = [
-    {
-      _id: new mongoose.Types.ObjectId(),
-      name: 'Birthday Party',
-      description: 'test description',
-      type: 'birthday',
-      clerk_user_id: '123',
-      url: 'birthday-party',
-      start: new Date(),
-      end: new Date(),
-      charities: [mockCharity],
-    } as typeof Occasion,
-  ];
+    },
+  ],
+});
+
+const Occasion = mongooseMock.model('Occasion', occasionSchema);
+
+const mockCharity = {
+  every_id: 'charity-id',
+  every_slug: 'charity-slug',
+  name: 'Charity Name',
+  website: 'https://charity.example',
+  description: 'A great cause.',
+  image_url: 'https://charity.example/logo.png',
+  donations: [],
+};
+
+const mockOccasions = [
+  {
+    _id: new mongoose.Types.ObjectId(),
+    name: 'Birthday Party',
+    description: 'test description',
+    type: 'birthday',
+    clerk_user_id: '123',
+    url: 'birthday-party',
+    start: new Date(),
+    end: new Date(),
+    charities: [mockCharity],
+  } as typeof Occasion,
+];
 
 describe('OccasionController', () => {
   let controller: OccasionController;
@@ -96,7 +98,9 @@ describe('OccasionController', () => {
 
       const result = await controller.createOccasion(createDto);
       expect(result).toEqual(createdOccasion);
-      expect(mockOccasionService.createOccasion).toHaveBeenCalledWith(createDto);
+      expect(mockOccasionService.createOccasion).toHaveBeenCalledWith(
+        createDto,
+      );
     });
 
     it('should throw an error if creation fails', async () => {
@@ -118,7 +122,9 @@ describe('OccasionController', () => {
       await expect(controller.createOccasion(createDto)).rejects.toThrow(
         'Creation failed',
       );
-      expect(mockOccasionService.createOccasion).toHaveBeenCalledWith(createDto);
+      expect(mockOccasionService.createOccasion).toHaveBeenCalledWith(
+        createDto,
+      );
     });
   });
 
@@ -174,14 +180,14 @@ describe('OccasionController', () => {
 
   describe('delete', () => {
     it('should successfully delete an occasion', async () => {
-        mockOccasionService.deleteOccasion.mockResolvedValue(undefined);
+      mockOccasionService.deleteOccasion.mockResolvedValue(undefined);
 
       await expect(controller.deleteOccasion('1')).resolves.toBeUndefined();
       expect(mockOccasionService.deleteOccasion).toHaveBeenCalledWith('1');
     });
 
     it('should throw an error if deletion fails', async () => {
-        mockOccasionService.deleteOccasion.mockRejectedValue(
+      mockOccasionService.deleteOccasion.mockRejectedValue(
         new Error('Deletion failed'),
       );
 
@@ -194,39 +200,43 @@ describe('OccasionController', () => {
 
   describe('findByUser', () => {
     it('should return occasions for a given user', async () => {
-        mockOccasionService.findByUser.mockResolvedValue(mockOccasions); 
-      
-        const result = await controller.findByUser('123');
-        expect(result).toEqual(mockOccasions);
-        expect(mockOccasionService.findByUser).toHaveBeenCalledWith('123'); 
-      });
-      it('should throw a NotFoundException if no occasions are found', async () => {
-        mockOccasionService.findByUser.mockResolvedValue([]);
-      
-        await expect(controller.findByUser('123')).rejects.toThrow(
-          new NotFoundException('No occasions found for user 123')
-        );
-        expect(mockOccasionService.findByUser).toHaveBeenCalledWith('123');
-      });
+      mockOccasionService.findByUser.mockResolvedValue(mockOccasions);
+
+      const result = await controller.findByUser('123');
+      expect(result).toEqual(mockOccasions);
+      expect(mockOccasionService.findByUser).toHaveBeenCalledWith('123');
+    });
+    it('should throw a NotFoundException if no occasions are found', async () => {
+      mockOccasionService.findByUser.mockResolvedValue([]);
+
+      await expect(controller.findByUser('123')).rejects.toThrow(
+        new NotFoundException('No occasions found for user 123'),
+      );
+      expect(mockOccasionService.findByUser).toHaveBeenCalledWith('123');
+    });
   });
 
   describe('findByUrl', () => {
     it('should return an occasion by URL', async () => {
-        mockOccasionService.findByUrl.mockResolvedValue(mockOccasions[0]);  
-        
-        const result = await controller.findByUrl('birthday-party');
-        expect(result).toEqual(mockOccasions[0]); 
-        expect(mockOccasionService.findByUrl).toHaveBeenCalledWith('birthday-party');  
-      });
-  
-      it('should throw a NotFoundException if no occasion is found by URL', async () => {
-        mockOccasionService.findByUrl.mockResolvedValue(null);
-  
-        await expect(controller.findByUrl('birthday-party')).rejects.toThrow(
-          new NotFoundException('Occasion with URL birthday-party not found'),
-        );
+      mockOccasionService.findByUrl.mockResolvedValue(mockOccasions[0]);
 
-        expect(mockOccasionService.findByUrl).toHaveBeenCalledWith('birthday-party');
-      });
+      const result = await controller.findByUrl('birthday-party');
+      expect(result).toEqual(mockOccasions[0]);
+      expect(mockOccasionService.findByUrl).toHaveBeenCalledWith(
+        'birthday-party',
+      );
+    });
+
+    it('should throw a NotFoundException if no occasion is found by URL', async () => {
+      mockOccasionService.findByUrl.mockResolvedValue(null);
+
+      await expect(controller.findByUrl('birthday-party')).rejects.toThrow(
+        new NotFoundException('Occasion with URL birthday-party not found'),
+      );
+
+      expect(mockOccasionService.findByUrl).toHaveBeenCalledWith(
+        'birthday-party',
+      );
+    });
   });
 });
