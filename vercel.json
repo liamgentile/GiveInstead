@@ -9,22 +9,5 @@
       "src": "backend/package.json",
       "use": "@vercel/node"
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/$1"
-    },
-    {
-      "src": "/everydotorg/donation",
-      "dest": "backend/everydotorg/donation"
-    },
-    {
-        "handle": "filesystem"
-      },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/$1"
-    }
   ]
 }
