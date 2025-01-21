@@ -170,8 +170,7 @@ export default function Occasions() {
                 </select>
 
                 <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="relative">
-                    start
+                  <div className="relative w-full">
                     <Calendar
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                       size={20}
@@ -182,8 +181,7 @@ export default function Occasions() {
                       className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
                     />
                   </div>
-                  <div className="relative">
-                    end
+                  <div className="relative w-full">
                     <Calendar
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                       size={20}
