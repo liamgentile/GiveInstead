@@ -12,7 +12,7 @@ export default function Landing() {
               <Gift className="h-6 w-6 text-green-600 my-auto" />
               <div className="text-xl font-bold">GiveInstead</div>
             </div>
-            <div className="sm:px-6 py-2 text-green-800 hover:bg-green-100 rounded-full transition-colors">
+            <div className="sm:px-6 py-2 text-green-800 sm:hover:bg-green-100 rounded-full transition-colors">
               <SignInButton />
             </div>
           </nav>

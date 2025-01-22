@@ -4,7 +4,6 @@ import {
   Trash2,
   PenSquare,
   Gift,
-  Calendar,
   Link,
   HandHeart,
   AlertTriangle,
@@ -168,28 +167,19 @@ export default function Occasions() {
                   <option value="father's day">Father's Day</option>
                   <option value="other">Other</option>
                 </select>
-
-                <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="relative w-full">
-                    <Calendar
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      size={20}
-                    />
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="w-full relative flex-1">
                     <input
                       type="datetime-local"
-                      {...form.register("start", {})}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
+                      name="start"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
                     />
                   </div>
-                  <div className="relative w-full">
-                    <Calendar
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      size={20}
-                    />
+                  <div className="w-full relative flex-1">
                     <input
                       type="datetime-local"
-                      {...form.register("end", {})}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
+                      name="end"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
                     />
                   </div>
                 </div>
@@ -347,6 +337,8 @@ export default function Occasions() {
                     setIsEditing(false);
                     setEditingId(null);
                     setSearchTerm("");
+                    setSelectedCharities([]); 
+                    form.reset();
                   }}
                   className="px-6 py-2 text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50"
                 >

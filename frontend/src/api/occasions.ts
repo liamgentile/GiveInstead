@@ -7,7 +7,7 @@ const CLERK_SERVICE_URL = import.meta.env.VITE_CLERK_SERVICE_URL;
 export const fetchOccasions = async (userId: string) => {
   const response = await fetch(`${OCCASIONS_BASE_URL}/${userId}`);
 
-  if (response.status === 304) {
+  if (response.status === 304 || response.status === 404) {
     return [];
   } else if (!response.ok) {
     throw new Error("Failed to fetch occasions");
