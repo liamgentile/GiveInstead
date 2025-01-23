@@ -75,7 +75,7 @@ export default function Occasions() {
     defaultValues: {
       name: "",
       description: "",
-      type: "birthday",
+      type: "other",
       charities: [],
     },
   });
@@ -152,47 +152,68 @@ export default function Occasions() {
                     </p>
                   )}
                 </div>
-
-                <select
-                  {...form.register("type")}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
-                >
-                  <option value="birthday">Birthday</option>
-                  <option value="graduation">Graduation</option>
-                  <option value="christmas">Christmas</option>
-                  <option value="hanukkah">Hanukkah</option>
-                  <option value="eid">Eid</option>
-                  <option value="diwali">Diwali</option>
-                  <option value="mother's day">Mother's Day</option>
-                  <option value="father's day">Father's Day</option>
-                  <option value="other">Other</option>
-                </select>
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="w-full relative flex-1">
-                    <input
-                      type="datetime-local"
-                      name="start"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
-                    />
-                  </div>
-                  <div className="w-full relative flex-1">
-                    <input
-                      type="datetime-local"
-                      name="end"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
-                    />
-                  </div>
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Occasion Category
+                  </label>
+                  <select
+                    {...form.register("type")}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
+                  >
+                    <option value="birthday">Birthday</option>
+                    <option value="graduation">Graduation</option>
+                    <option value="christmas">Christmas</option>
+                    <option value="hanukkah">Hanukkah</option>
+                    <option value="eid">Eid</option>
+                    <option value="diwali">Diwali</option>
+                    <option value="mother's day">Mother's Day</option>
+                    <option value="father's day">Father's Day</option>
+                    <option value="other">Other</option>
+                  </select>
                 </div>
-                {form.formState.errors.start && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {form.formState.errors.start.message}
-                  </p>
-                )}
-                {form.formState.errors.end && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {form.formState.errors.end.message}
-                  </p>
-                )}
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Start Date & Time
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="datetime-local"
+                      {...form.register("start")}
+                      className="w-full appearance-none px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
+                      style={{
+                        WebkitAppearance: "none",
+                        MozAppearance: "none",
+                      }}
+                    />
+                  </div>
+                  {form.formState.errors.start && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {form.formState.errors.start.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Date & Time
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="datetime-local"
+                      {...form.register("end")}
+                      className="w-full appearance-none px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
+                      style={{
+                        WebkitAppearance: "none",
+                        MozAppearance: "none",
+                      }}
+                    />
+                  </div>
+                  {form.formState.errors.end && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {form.formState.errors.end.message}
+                    </p>
+                  )}
+                </div>
                 <div className="flex items-center space-x-2 text-yellow-600">
                   <AlertTriangle size={16} />
                   <p className="text-sm">
@@ -203,6 +224,11 @@ export default function Occasions() {
               </div>
 
               <div className="space-y-4">
+                <p className="block text-sm font-medium text-gray-700 mb-1">
+                  {favorites.length > 0
+                    ? "Search for charities to add to your occasion or add from your favourites below."
+                    : "Search for charities to add to your occasion."}
+                </p>
                 <div className="relative">
                   <Search
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -337,7 +363,7 @@ export default function Occasions() {
                     setIsEditing(false);
                     setEditingId(null);
                     setSearchTerm("");
-                    setSelectedCharities([]); 
+                    setSelectedCharities([]);
                     form.reset();
                   }}
                   className="px-6 py-2 text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50"
