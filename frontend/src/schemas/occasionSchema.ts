@@ -34,13 +34,10 @@ export const occasionSchema = z
       ),
     charities: z.array(
       z.object({
-        charity: z.object({
-          _id: z.string(),
-          name: z.string(),
-          description: z.string(),
-        }),
+        every_id: z.string(),
+        name: z.string(),
       })
-    ),
+    ).min(1, "At least one charity must be selected"),
     url: z.string().optional(),
   })
   .refine(

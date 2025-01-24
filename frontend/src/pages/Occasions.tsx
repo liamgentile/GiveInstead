@@ -9,7 +9,7 @@ import {
   AlertTriangle,
   ChevronDown,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -79,6 +79,19 @@ export default function Occasions() {
       charities: [],
     },
   });
+
+  useEffect(() => {
+    form.setValue('charities', 
+      selectedCharities.map((charity) => ({
+        every_id: charity.every_id || '',
+        name: charity.name,
+      }))
+    );
+    
+    if (form.formState.isSubmitted) {
+      form.trigger('charities');
+    }
+  }, [selectedCharities, form, form.formState.isSubmitted]);
 
   return (
     <Layout>
@@ -201,11 +214,7 @@ export default function Occasions() {
                     <input
                       type="datetime-local"
                       {...form.register("end")}
-                      className="w-full appearance-none px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
-                      style={{
-                        WebkitAppearance: "none",
-                        MozAppearance: "none",
-                      }}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
                     />
                   </div>
                   {form.formState.errors.end && (
@@ -351,6 +360,11 @@ export default function Occasions() {
                     </div>
                   ) : (
                     <p className="text-gray-500">No charities selected yet.</p>
+                  )}
+                  {form.formState.errors.charities && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {form.formState.errors.charities.message}
+                    </p>
                   )}
                 </motion.div>
               </div>
