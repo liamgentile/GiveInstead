@@ -8,6 +8,7 @@ import {
   HandHeart,
   AlertTriangle,
   ChevronDown,
+  Calendar,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -81,15 +82,16 @@ export default function Occasions() {
   });
 
   useEffect(() => {
-    form.setValue('charities', 
+    form.setValue(
+      "charities",
       selectedCharities.map((charity) => ({
-        every_id: charity.every_id || '',
+        every_id: charity.every_id || "",
         name: charity.name,
       }))
     );
-    
+
     if (form.formState.isSubmitted) {
-      form.trigger('charities');
+      form.trigger("charities");
     }
   }, [selectedCharities, form, form.formState.isSubmitted]);
 
@@ -171,7 +173,7 @@ export default function Occasions() {
                   </label>
                   <select
                     {...form.register("type")}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
                   >
                     <option value="birthday">Birthday</option>
                     <option value="graduation">Graduation</option>
@@ -192,12 +194,15 @@ export default function Occasions() {
                     <input
                       type="datetime-local"
                       {...form.register("start")}
-                      className="w-full appearance-none px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
+                      className="w-full appearance-none px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
                       style={{
                         WebkitAppearance: "none",
                         MozAppearance: "none",
                       }}
                     />
+                    <div className="hidden sm:absolute top-3 right-4">
+                      <Calendar className="w-5 h-5 text-gray-800" />
+                    </div>
                   </div>
                   {form.formState.errors.start && (
                     <p className="text-red-500 text-sm mt-1">
@@ -206,7 +211,7 @@ export default function Occasions() {
                   )}
                 </div>
 
-                <div className="w-full">
+                <div className="w-full mt-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     End Date & Time
                   </label>
@@ -214,8 +219,15 @@ export default function Occasions() {
                     <input
                       type="datetime-local"
                       {...form.register("end")}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
+                      className="w-full appearance-none px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
+                      style={{
+                        WebkitAppearance: "none",
+                        MozAppearance: "none",
+                      }}
                     />
+                    <div className="hidden sm:absolute top-3 right-4">
+                      <Calendar className="w-5 h-5 text-gray-800" />
+                    </div>
                   </div>
                   {form.formState.errors.end && (
                     <p className="text-red-500 text-sm mt-1">
