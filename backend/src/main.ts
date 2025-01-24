@@ -1,36 +1,33 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { INestApplication } from '@nestjs/common';
 import { IncomingMessage, ServerResponse } from 'http';
 
-let app: INestApplication;
-
-async function bootstrap() {
-  if (!app) {
-    app = await NestFactory.create(AppModule);
-    app.enableCors({
+const appPromise = NestFactory.create(AppModule)
+  .then(async (appInstance) => {
+    appInstance.enableCors({
       origin: [
         process.env.FRONTEND_PRODUCTION_URL,
         process.env.FRONTEND_LOCALHOST,
       ],
       methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
     });
-    await app.init();
-  }
-  return app;
-}
+    await appInstance.init();
+    return appInstance;
+  });
 
 export default async function handler(
   req: IncomingMessage,
   res: ServerResponse,
 ) {
-  const app = await bootstrap();
+  const app = await appPromise;
   const httpAdapter = app.getHttpAdapter();
   return httpAdapter.getInstance()(req, res);
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  bootstrap().then((app) => {
-    app.listen(3000, () => console.log('Listening on http://localhost:3000'));
+  appPromise.then((app) => {
+    app.listen(3000, () => {
+      console.log('Listening on http://localhost:3000');
+    });
   });
 }
