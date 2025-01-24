@@ -194,15 +194,9 @@ export default function Occasions() {
                     <input
                       type="datetime-local"
                       {...form.register("start")}
-                      className="w-full appearance-none px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
-                      style={{
-                        WebkitAppearance: "none",
-                        MozAppearance: "none",
-                      }}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
                     />
-                    <div className="absolute sm:hidden top-3 right-4">
-                      <Calendar className="w-5 h-5 text-gray-800" />
-                    </div>
+        
                   </div>
                   {form.formState.errors.start && (
                     <p className="text-red-500 text-sm mt-1">
@@ -219,15 +213,8 @@ export default function Occasions() {
                     <input
                       type="datetime-local"
                       {...form.register("end")}
-                      className="w-full appearance-none px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
-                      style={{
-                        WebkitAppearance: "none",
-                        MozAppearance: "none",
-                      }}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
                     />
-                    <div className="absolute sm:hidden top-3 right-4">
-                      <Calendar className="w-5 h-5 text-gray-800" />
-                    </div>
                   </div>
                   {form.formState.errors.end && (
                     <p className="text-red-500 text-sm mt-1">
