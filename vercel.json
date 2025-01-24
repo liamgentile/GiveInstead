@@ -13,11 +13,6 @@
       }
     }
   ],
-  "functions": {
-    "backend/src/main.ts": {
-      "memory": 512
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
