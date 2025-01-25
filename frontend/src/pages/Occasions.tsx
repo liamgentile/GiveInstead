@@ -95,8 +95,8 @@ export default function Occasions() {
   }, [selectedCharities, form, form.formState.isSubmitted]);
 
   return (
-    <Layout>
-      {!isLoading && occasions.length === 0 && !showForm ? (
+    <Layout>i
+      {!isLoading && occasions.length === 0 && !showForm && (
         <motion.div
           initial={{
             opacity: 0,
@@ -123,7 +123,7 @@ export default function Occasions() {
             Create Occasion
           </button>
         </motion.div>
-      ) : null}
+      )}
 
       {showForm && (
         <motion.div
@@ -172,7 +172,7 @@ export default function Occasions() {
                   </label>
                   <select
                     {...form.register("type")}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
                   >
                     <option value="birthday">Birthday</option>
                     <option value="graduation">Graduation</option>
@@ -189,32 +189,26 @@ export default function Occasions() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Start Date & Time
                   </label>
-                  <div className="relative">
                     <input
                       type="datetime-local"
                       {...form.register("start")}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
                     />
-        
-                  </div>
                   {form.formState.errors.start && (
                     <p className="text-red-500 text-sm mt-1">
                       {form.formState.errors.start.message}
                     </p>
                   )}
                 </div>
-
                 <div className="w-full mt-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     End Date & Time
                   </label>
-                  <div className="relative">
                     <input
                       type="datetime-local"
                       {...form.register("end")}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-gray-100"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
                     />
-                  </div>
                   {form.formState.errors.end && (
                     <p className="text-red-500 text-sm mt-1">
                       {form.formState.errors.end.message}
