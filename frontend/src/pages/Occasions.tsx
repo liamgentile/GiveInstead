@@ -7,7 +7,7 @@ import {
   Link,
   HandHeart,
   AlertTriangle,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -96,6 +96,22 @@ export default function Occasions() {
 
   return (
     <Layout>
+      {isLoading && (
+        <div className="text-center py-12">
+          <motion.div
+            animate={{
+              rotate: 360,
+            }}
+            transition={{
+              duration: 1,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full mx-auto"
+          />
+        </div>
+      )}
+
       {!isLoading && occasions.length === 0 && !showForm && (
         <motion.div
           initial={{
@@ -189,11 +205,11 @@ export default function Occasions() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Start Date & Time
                   </label>
-                    <input
-                      type="datetime-local"
-                      {...form.register("start")}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
-                    />
+                  <input
+                    type="datetime-local"
+                    {...form.register("start")}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white appearance-none"
+                  />
                   {form.formState.errors.start && (
                     <p className="text-red-500 text-sm mt-1">
                       {form.formState.errors.start.message}
@@ -204,11 +220,11 @@ export default function Occasions() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     End Date & Time
                   </label>
-                    <input
-                      type="datetime-local"
-                      {...form.register("end")}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white"
-                    />
+                  <input
+                    type="datetime-local"
+                    {...form.register("end")}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-1 focus:ring-black bg-white appearance-none"
+                  />
                   {form.formState.errors.end && (
                     <p className="text-red-500 text-sm mt-1">
                       {form.formState.errors.end.message}
