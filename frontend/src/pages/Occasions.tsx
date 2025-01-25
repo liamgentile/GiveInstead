@@ -95,7 +95,7 @@ export default function Occasions() {
   }, [selectedCharities, form, form.formState.isSubmitted]);
 
   return (
-    <Layout>i
+    <Layout>
       {!isLoading && occasions.length === 0 && !showForm && (
         <motion.div
           initial={{
