@@ -5,12 +5,42 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
-  - package-ecosystem: "npm" # or "yarn"
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    reviewers:
+      - "liamgentile"
+    assignees:
+      - "liamgentile"
+  - package-ecosystem: "npm" 
     directory: "/backend"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    reviewers:
+      - "liamgentile"
+    assignees:
+      - "liamgentile"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    reviewers:
+      - "liamgentile"
+    assignees:
+      - "liamgentile"
