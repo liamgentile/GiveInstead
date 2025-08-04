@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { Injectable, Logger, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateFavouriteCharityDto } from '../dto/createFavouriteCharity.dto';
 import { FavouriteCharity } from '../schemas/favouriteCharity.schema';
@@ -31,8 +31,12 @@ export class FavouriteCharitiesService {
     try {
       const { _id, note } = updateFavouriteCharityNoteDto;
 
+      if (typeof _id !== 'string') {
+        throw new BadRequestException('Invalid _id');
+      }
+
       const updatedCharity = await this.favouriteCharityModel.findOneAndUpdate(
-        { _id },
+        { _id: { $eq: _id } },
         { $set: { note } },
         { new: true },
       );
