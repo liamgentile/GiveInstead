@@ -48,9 +48,15 @@ export class OccasionService {
 
   async updateOccasion(_id: string, updateOccasionDto: OccasionDto): Promise<Occasion> {
     try {
-      const updatedOccasion = await this.occasionModel.findByIdAndUpdate(_id, updateOccasionDto, {
-        new: true,
-      });
+      // Prevent NoSQL injection: reject any keys starting with '$'
+      if (Object.keys(updateOccasionDto).some(key => key.startsWith('$'))) {
+        throw new InternalServerErrorException('Invalid update object');
+      }
+      const updatedOccasion = await this.occasionModel.findByIdAndUpdate(
+        _id,
+        { $set: updateOccasionDto },
+        { new: true },
+      );
       if (!updatedOccasion) {
         throw new NotFoundException(`Occasion with ID ${_id} not found`);
       }
