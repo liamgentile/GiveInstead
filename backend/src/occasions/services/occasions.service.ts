@@ -48,10 +48,8 @@ export class OccasionService {
 
   async updateOccasion(_id: string, updateOccasionDto: OccasionDto): Promise<Occasion> {
     try {
-      // Prevent NoSQL injection: reject any keys starting with '$'
-      if (Object.keys(updateOccasionDto).some(key => key.startsWith('$'))) {
-        throw new InternalServerErrorException('Invalid update object');
-      }
+      // Prevent NoSQL injection: reject any keys starting with '$' (recursively)
+      this.validateNoDollarKeys(updateOccasionDto);
       const updatedOccasion = await this.occasionModel.findByIdAndUpdate(
         _id,
         { $set: updateOccasionDto },
@@ -82,6 +80,26 @@ export class OccasionService {
       }
       this.logger.error('Error deleting occasion:', error.stack);
       throw new InternalServerErrorException('Error deleting occasion');
+    }
+  }
+  /**
+   * Recursively checks for keys starting with '$' in the provided object.
+   * Throws an InternalServerErrorException if any such key is found.
+   */
+  private validateNoDollarKeys(obj: any, path: string = ''): void {
+    if (obj && typeof obj === 'object') {
+      for (const key of Object.keys(obj)) {
+        if (key.startsWith('$')) {
+          throw new InternalServerErrorException(
+            `Invalid update object: key "${path ? path + '.' : ''}${key}" starts with "$"`
+          );
+        }
+        // Recursively check nested objects and arrays
+        const value = obj[key];
+        if (typeof value === 'object' && value !== null) {
+          this.validateNoDollarKeys(value, path ? path + '.' + key : key);
+        }
+      }
     }
   }
 }
