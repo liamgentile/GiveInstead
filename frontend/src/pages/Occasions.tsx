@@ -7,9 +7,10 @@ import {
   Link,
   HandHeart,
   AlertTriangle,
+  ChevronDown,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -24,6 +25,7 @@ import { useOccasions } from "../hooks/useOccasions";
 export default function Occasions() {
   const { user } = useUser();
   const [selectedCharities, setSelectedCharities] = useState<Charity[]>([]);
+  const [expandedOccasion, setExpandedOccasion] = useState<string | null>(null);
 
   const {
     occasions,
@@ -92,18 +94,13 @@ export default function Occasions() {
   return (
     <Layout>
       {isLoading && (
-        <div className="text-center py-12">
-          <motion.div
-            animate={{
-              rotate: 360,
-            }}
-            transition={{
-              duration: 1,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full mx-auto"
-          />
+        <div className="p-6 max-w-4xl mx-auto w-full">
+          <div className="space-y-4">
+            <div className="h-7 w-1/2 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
+          </div>
         </div>
       )}
 
@@ -255,18 +252,12 @@ export default function Occasions() {
                 </div>
 
                 {isLoading && (
-                  <div className="text-center py-12">
-                    <motion.div
-                      animate={{
-                        rotate: 360,
-                      }}
-                      transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                      className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full mx-auto"
-                    />
+                  <div className="py-6">
+                    <div className="space-y-3">
+                      <div className="h-5 w-2/3 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-5 w-3/4 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-5 w-1/2 bg-gray-200 rounded animate-pulse" />
+                    </div>
                   </div>
                 )}
 
@@ -437,36 +428,60 @@ export default function Occasions() {
                     if (donations.length === 0) return null;
                     return (
                       <div className="mt-6">
-                        <div className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 rounded-lg">
+                        <button
+                          onClick={() =>
+                            setExpandedOccasion((prev) =>
+                              prev === (occasion._id || "") ? null : (occasion._id || "")
+                            )
+                          }
+                          className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                        >
                           <span className="text-sm">Donations</span>
-                        </div>
-                        <div className="mt-4 space-y-3 px-1">
-                          {donations.map((donation) => (
-                            <div
-                              key={donation._id}
-                              className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                          <ChevronDown
+                            className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
+                              expandedOccasion === (occasion._id || "") ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                        <AnimatePresence>
+                          {expandedOccasion === (occasion._id || "") && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
                             >
-                              <div className="flex flex-col">
-                                <span className="font-medium text-sm">
-                                  {donation.donor_name || "Anonymous"}
-                                </span>
-                                <span className="text-xs text-gray-500">{(donation as any)._charityName}</span>
+                              <div className="mt-4 space-y-3 px-1">
+                                {donations.map((donation) => (
+                                  <div
+                                    key={donation._id}
+                                    className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                                  >
+                                    <div className="flex flex-col">
+                                      <span className="font-medium text-sm">
+                                        {donation.donor_name || "Anonymous"}
+                                      </span>
+                                      <span className="text-xs text-gray-500">{(donation as any)._charityName}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-4 text-sm">
+                                      <span className="text-gray-700 font-medium">
+                                        ${donation.amount.toLocaleString()}
+                                      </span>
+                                      <span className="text-gray-500">
+                                        {new Date(donation.created_at).toLocaleDateString("en-US", {
+                                          month: "short",
+                                          day: "numeric",
+                                          year: "numeric",
+                                        })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
-                              <div className="flex items-center space-x-4 text-sm">
-                                <span className="text-gray-700 font-medium">
-                                  ${donation.amount.toLocaleString()}
-                                </span>
-                                <span className="text-gray-500">
-                                  {new Date(donation.created_at).toLocaleDateString("en-US", {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric",
-                                  })}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     );
                   })()}
