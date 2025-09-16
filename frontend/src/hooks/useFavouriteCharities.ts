@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Charity from "../interfaces/Charity";
 import { fetchFavourites } from "../api/fetchFavourites";
 import { removeFavorite, updateNote } from "../api/updateFavouriteCharities";
@@ -25,7 +25,7 @@ export const useFavouriteCharities = (userId: string) => {
     loadFavorites();
   }, [userId]);
 
-  const handleUpdateNote = async (_id: string, note: string) => {
+  const handleUpdateNote = useCallback(async (_id: string, note: string) => {
     try {
       await updateNote(_id, note);
 
@@ -38,9 +38,9 @@ export const useFavouriteCharities = (userId: string) => {
     } catch (err) {
       setError("Failed to update the note");
     }
-  };
+  }, []);
 
-  const removeFromFavourites = async (_id: string) => {
+  const removeFromFavourites = useCallback(async (_id: string) => {
     try {
       await removeFavorite(_id);
 
@@ -50,7 +50,7 @@ export const useFavouriteCharities = (userId: string) => {
     } catch (err) {
       setError("Failed to remove from favorites");
     }
-  };
+  }, []);
 
   return {
     favorites,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { fetchAllStats } from "../api/statistics";
 import Stats from "../interfaces/Stats";
 
@@ -40,5 +40,5 @@ export const useStatistics = (userId: string) => {
     loadStats();
   }, [userId]);
 
-  return { stats, isLoading, error };
+  return { stats: useMemo(() => stats, [stats]), isLoading, error };
 };

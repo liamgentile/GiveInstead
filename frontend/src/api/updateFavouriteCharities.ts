@@ -1,4 +1,5 @@
 import Charity from "../interfaces/Charity";
+import { __invalidateFavouritesCache } from "./fetchFavourites";
 
 const FAVOURITE_CHARITY_BASE_URL = import.meta.env
   .VITE_FAVOURITE_CHARITY_BASE_URL;
@@ -28,10 +29,12 @@ export const addFavorite = async (
     throw new Error("Failed to favorite charity");
   }
 
-  return await response.json();
+  const created = await response.json();
+  __invalidateFavouritesCache(userId);
+  return created;
 };
 
-export const removeFavorite = async (charityId: string): Promise<void> => {
+export const removeFavorite = async (charityId: string, userId?: string): Promise<void> => {
   const response = await fetch(`${FAVOURITE_CHARITY_BASE_URL}/${charityId}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
@@ -39,6 +42,9 @@ export const removeFavorite = async (charityId: string): Promise<void> => {
 
   if (!response.ok) {
     throw new Error("Failed to unfavorite charity");
+  }
+  if (userId) {
+    __invalidateFavouritesCache(userId);
   }
 };
 

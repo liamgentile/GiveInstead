@@ -103,6 +103,7 @@ export default function SearchCharities() {
                 <img
                   src={charity.image_url}
                   alt={charity.name}
+                  loading="lazy"
                   className="w-full h-48 object-cover rounded-lg"
                 />
               ) : (
@@ -161,6 +162,7 @@ export default function SearchCharities() {
                 <img
                   src={charity.image_url}
                   alt={charity.name}
+                  loading="lazy"
                   className="w-full h-48 object-cover"
                 />
               ) : (
@@ -215,6 +217,7 @@ export default function SearchCharities() {
                   <img
                     src={selectedCharity.image_url}
                     alt={selectedCharity.name}
+                    loading="lazy"
                     className="w-full h-64 object-cover rounded-lg mb-4"
                   />
                 ) : (

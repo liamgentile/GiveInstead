@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useDeferredValue, useRef } from "react";
 import { fetchFavourites } from "../api/fetchFavourites";
 import { fetchCharities } from "../api/fetchCharities";
 import { addFavorite, removeFavorite } from "../api/updateFavouriteCharities";
@@ -28,30 +28,40 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
     loadFavorites();
   }, [userId]);
 
+  const deferredTerm = useDeferredValue(searchTerm);
+  const abortRef = useRef<AbortController | null>(null);
+
   useEffect(() => {
-    const debounce = setTimeout(() => {
-      if (searchTerm) {
-        const searchCharities = async () => {
-          setIsLoading(true);
-          setError(null);
-          try {
-            const fetchedCharities = await fetchCharities(searchTerm);
-            setCharities(fetchedCharities);
-          } catch (err) {
-            setError("Failed to fetch charities. Please try again.");
-          } finally {
-            setIsLoading(false);
-          }
-        };
+    if (!deferredTerm) {
+      setCharities([]);
+      return;
+    }
 
-        searchCharities();
-      } else {
-        setCharities([]);
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    const run = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const fetchedCharities = await fetchCharities(deferredTerm, { signal: controller.signal });
+        setCharities(fetchedCharities);
+      } catch (err) {
+        if ((err as any)?.name !== "AbortError") {
+          setError("Failed to fetch charities. Please try again.");
+        }
+      } finally {
+        setIsLoading(false);
       }
-    }, 500);
+    };
 
-    return () => clearTimeout(debounce);
-  }, [searchTerm]);
+    const t = setTimeout(run, 400);
+    return () => {
+      clearTimeout(t);
+      controller.abort();
+    };
+  }, [deferredTerm]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -61,7 +71,7 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
     }
   }, [isModalOpen]);
 
-  const toggleFavorite = async (charity: Charity) => {
+  const toggleFavorite = useCallback(async (charity: Charity) => {
     const isFavorited = favorites.some(
       (fav) => fav.every_id === charity.every_id
     );
@@ -71,7 +81,7 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
           (fav) => fav.every_id === charity.every_id
         );
         if (charityToDelete) {
-          await removeFavorite(charityToDelete._id || "");
+          await removeFavorite(charityToDelete._id || "", userId);
           setFavorites((prev) =>
             prev.filter((fav) => fav.every_id !== charity.every_id)
           );
@@ -83,7 +93,7 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
     } catch (err) {
       setError("Something went wrong. Please try again.");
     }
-  };
+  }, [favorites, userId]);
 
   return {
     isLoading,
@@ -91,7 +101,7 @@ export const useSearchCharities = (userId: string, searchTerm: string) => {
     selectedCharity,
     isModalOpen,
     error,
-    favorites,
+    favorites: useMemo(() => favorites, [favorites]),
     setSelectedCharity,
     setIsModalOpen,
     toggleFavorite,
