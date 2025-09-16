@@ -14,7 +14,7 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
   const [occasions, setOccasions] = useState<Occasion[]>([]);
   const [charities, setCharities] = useState<Charity[]>([]);
   const [favorites, setFavorites] = useState<Charity[]>([]);
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [isLoading, setIsLoading] = useState<Boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showForm, setShowForm] = useState<Boolean>(false);
