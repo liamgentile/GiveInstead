@@ -1,8 +1,9 @@
+import React from "react";
 import { motion } from "framer-motion";
 import { Check, Plus } from "lucide-react";
 import Charity from "../interfaces/Charity";
 
-export default function CharityCard({
+function CharityCardComponent({
   charity,
   onSelect,
   isSelected,
@@ -50,3 +51,18 @@ export default function CharityCard({
     </motion.div>
   );
 }
+
+const CharityCard = React.memo(
+  CharityCardComponent,
+  (prevProps, nextProps) => {
+    return (
+      prevProps.isSelected === nextProps.isSelected &&
+      prevProps.charity.every_id === nextProps.charity.every_id &&
+      prevProps.charity.name === nextProps.charity.name &&
+      prevProps.charity.description === nextProps.charity.description &&
+      prevProps.charity.image_url === nextProps.charity.image_url
+    );
+  }
+);
+
+export default CharityCard;

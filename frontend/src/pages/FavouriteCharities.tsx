@@ -83,6 +83,7 @@ export default function FavoriteCharities() {
                   <img
                     src={charity.image_url}
                     alt={charity.name}
+                    loading="lazy"
                     className="w-full sm:w-48 h-48 object-cover rounded-lg mb-4 sm:mb-0"
                   />
                 ) : (

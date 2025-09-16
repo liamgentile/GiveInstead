@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useDeferredValue, useRef } from "react";
 import {
   fetchOccasions,
   createOrUpdateOccasion,
@@ -25,16 +25,21 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
   const [showArchived, setShowArchived] = useState<Boolean>(false);
 
   const currentDate = new Date();
-  const activeOccasions = occasions.filter(
-    (occasion) => new Date(occasion.end) > currentDate
+  const activeOccasions = useMemo(
+    () => occasions.filter((occasion) => new Date(occasion.end) > currentDate),
+    [occasions]
   );
-  const archivedOccasions = occasions.filter(
-    (occasion) => new Date(occasion.end) <= currentDate
+  const archivedOccasions = useMemo(
+    () => occasions.filter((occasion) => new Date(occasion.end) <= currentDate),
+    [occasions]
   );
 
-  const displayedOccasions = showArchived ? archivedOccasions : activeOccasions;
+  const displayedOccasions = useMemo(
+    () => (showArchived ? archivedOccasions : activeOccasions),
+    [showArchived, archivedOccasions, activeOccasions]
+  );
 
-  const loadOccasions = async () => {
+  const loadOccasions = useCallback(async () => {
     setIsLoading(true);
     try {
       const fetchedOccasions = await fetchOccasions(userId);
@@ -44,9 +49,9 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId]);
 
-  const loadFavorites = async () => {
+  const loadFavorites = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await fetchFavourites(userId);
@@ -56,26 +61,33 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId]);
 
-  const searchCharitiesHandler = async () => {
+  const deferredSearchTerm = useDeferredValue(searchTerm);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const searchCharitiesHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
-      const fetchedCharities = await fetchCharities(searchTerm);
+      const fetchedCharities = await fetchCharities(deferredSearchTerm, { signal: controller.signal });
       setCharities(fetchedCharities);
     } catch (err) {
-      setError("Failed to fetch charities. Please try again.");
+      if ((err as any)?.name !== "AbortError") {
+        setError("Failed to fetch charities. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [deferredSearchTerm]);
 
-  const handleCreateOrUpdateOccasion = async (data: any): Promise<void> => {
+  const handleCreateOrUpdateOccasion = useCallback(async (data: any): Promise<void> => {
     setIsLoading(true);
     try {
       const occasionData = {
-        clerk_user_id: userId,
         name: data.name,
         description: data.description,
         type: data.type,
@@ -96,7 +108,8 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
 
       const savedOccasion = await createOrUpdateOccasion(
         occasionData,
-        isEditing ? editingId : null
+        isEditing ? editingId : null,
+        userId
       );
 
       if (isEditing) {
@@ -120,9 +133,9 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId, isEditing, editingId, occasions, selectedCharities]);
 
-  const deleteOccasionHandler = async (id: string): Promise<void> => {
+  const deleteOccasionHandler = useCallback(async (id: string): Promise<void> => {
     setIsLoading(true);
     try {
       await deleteOccasion(id);
@@ -134,11 +147,11 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const toggleAccordion = (charityId: string) => {
+  const toggleAccordion = useCallback((charityId: string) => {
     setExpandedCharity((prev) => (prev === charityId ? null : charityId));
-  };
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -148,16 +161,15 @@ export const useOccasions = (userId: string, selectedCharities: Charity[]) => {
   }, [userId]);
 
   useEffect(() => {
-    const debounce = setTimeout(() => {
-      if (searchTerm) {
+    const t = setTimeout(() => {
+      if (deferredSearchTerm) {
         searchCharitiesHandler();
       } else {
         setCharities([]);
       }
-    }, 500);
-
-    return () => clearTimeout(debounce);
-  }, [searchTerm]);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [deferredSearchTerm, searchCharitiesHandler]);
 
   return {
     occasions,

@@ -4,21 +4,33 @@ import OccasionWithHostName from "../interfaces/OccasionWithHostName";
 const OCCASIONS_BASE_URL = import.meta.env.VITE_OCCASIONS_BASE_URL;
 const CLERK_SERVICE_URL = import.meta.env.VITE_CLERK_SERVICE_URL;
 
+type CacheValue = { data: unknown; timestamp: number };
+const cache: Map<string, CacheValue> = new Map();
+
 export const fetchOccasions = async (userId: string) => {
-  const response = await fetch(`${OCCASIONS_BASE_URL}/${userId}`);
+  const cacheKey = `occasions:${userId}`;
+  const cached = cache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < 1000 * 60 * 2) {
+    return cached.data as any[];
+  }
+
+  const response = await fetch(`${OCCASIONS_BASE_URL}/${encodeURIComponent(userId)}`);
 
   if (response.status === 304 || response.status === 404) {
     return [];
   } else if (!response.ok) {
     throw new Error("Failed to fetch occasions");
   } else {
-    return response.json();
+    const data = await response.json();
+    cache.set(cacheKey, { data, timestamp: Date.now() });
+    return data;
   }
 };
 
 export const createOrUpdateOccasion = async (
   occasionData: Occasion,
-  editingId: string | null
+  editingId: string | null,
+  userIdForCache?: string
 ): Promise<Occasion> => {
   const url = editingId
     ? `${OCCASIONS_BASE_URL}/${editingId}`
@@ -38,7 +50,11 @@ export const createOrUpdateOccasion = async (
     );
   }
 
-  return response.json();
+  const result = await response.json();
+  if (userIdForCache) {
+    cache.delete(`occasions:${userIdForCache}`);
+  }
+  return result;
 };
 
 export const deleteOccasion = async (id: string): Promise<void> => {
@@ -52,12 +68,13 @@ export const deleteOccasion = async (id: string): Promise<void> => {
   if (!response.ok) {
     throw new Error("Failed to delete occasion");
   }
+  // cannot infer userId here, let callers invalidate if needed
 };
 
 export const fetchOccasionByUrl = async (
   url: string
 ): Promise<OccasionWithHostName> => {
-  const response = await fetch(`${OCCASIONS_BASE_URL}/url/${url}`);
+  const response = await fetch(`${OCCASIONS_BASE_URL}/url/${encodeURIComponent(url)}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch occasion data");
@@ -82,4 +99,8 @@ export const fetchOccasionByUrl = async (
     occasion: occasionData,
     hostName: userData,
   };
+};
+
+export const __invalidateOccasionsCache = (userId: string) => {
+  cache.delete(`occasions:${userId}`);
 };

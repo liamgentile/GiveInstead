@@ -13,6 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import { useClerk, useUser } from "@clerk/clerk-react";
 import { motion } from "framer-motion";
+import { NavLink } from "react-router-dom";
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
   const { isLoaded } = useUser();
@@ -34,18 +35,22 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
 
   if (!isLoaded) {
     return (
-      <div className="text-center py-12">
-        <motion.div
-          animate={{
-            rotate: 360,
-          }}
-          transition={{
-            duration: 1,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full mx-auto"
-        />
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm px-6 py-4 flex items-center justify-between lg:hidden">
+          <div className="flex space-x-2 text-center">
+            <Gift className="h-6 w-6 text-green-600 my-auto" />
+            <h2 className="text-xl font-bold text-gray-900">GiveInstead</h2>
+          </div>
+          <div className="h-6 w-6" />
+        </header>
+        <div className="p-6 max-w-4xl mx-auto">
+          <div className="space-y-4">
+            <div className="h-8 w-2/3 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-4/6 bg-gray-200 rounded animate-pulse" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -119,16 +124,18 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
                   href: "/user-profile",
                 },
               ].map((item) => (
-                <a
+                <NavLink
                   key={item.name}
-                  href={item.href}
-                  className={`flex items-center px-3 py-4 text-gray-600 rounded-md hover:bg-green-50 hover:text-green-800 group transition-colors ${
-                    window.location.pathname === item.href ? "font-bold" : ""
-                  }`}
+                  to={item.href}
+                  className={({ isActive }) =>
+                    `flex items-center px-3 py-4 text-gray-600 rounded-md hover:bg-green-50 hover:text-green-800 group transition-colors ${
+                      isActive ? "font-bold" : ""
+                    }`
+                  }
                 >
                   <item.icon className="mr-3 h-5 w-5" />
                   <span>{item.name}</span>
-                </a>
+                </NavLink>
               ))}
               <button
                 onClick={() => signOut({ redirectUrl: "/" })}

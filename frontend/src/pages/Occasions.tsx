@@ -7,10 +7,9 @@ import {
   Link,
   HandHeart,
   AlertTriangle,
-  ChevronDown,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -44,8 +43,6 @@ export default function Occasions() {
     setShowArchived,
     displayedOccasions,
     archivedOccasions,
-    expandedCharity,
-    toggleAccordion,
   } = user?.id
     ? useOccasions(user.id, selectedCharities)
     : {
@@ -57,7 +54,6 @@ export default function Occasions() {
         error: "Could not identify user",
         showForm: false,
         showArchived: false,
-        expandedCharity: null,
         displayedOccasions: [],
         archivedOccasions: [],
         setShowForm: () => {},
@@ -67,7 +63,6 @@ export default function Occasions() {
         handleCreateOrUpdateOccasion: () => {},
         deleteOccasionHandler: () => {},
         setShowArchived: () => {},
-        toggleAccordion: () => {},
       };
 
   const form = useForm<z.infer<typeof occasionSchema>>({
@@ -435,68 +430,46 @@ export default function Occasions() {
                     <span>→</span>
                     <span>{format(occasion.end, "MMM d, yyyy, h:mm a")}</span>
                   </div>
-                  {occasion.charities.map((charity) => (
-                    <div key={charity.every_slug}>
-                      {charity.donations && charity.donations.length > 0 && (
-                        <div className="mt-6">
-                          <button
-                            onClick={() => toggleAccordion(charity.every_slug)}
-                            className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-                          >
-                            <span className="text-sm">Donations</span>
-
-                            <ChevronDown
-                              className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
-                                expandedCharity === charity.every_slug
-                                  ? "rotate-180"
-                                  : ""
-                              }`}
-                            />
-                          </button>
-
-                          <AnimatePresence>
-                            {expandedCharity === charity.every_slug && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="overflow-hidden"
-                              >
-                                <div className="mt-4 space-y-3 px-1">
-                                  {charity.donations.map((donation) => (
-                                    <div
-                                      key={donation._id}
-                                      className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
-                                    >
-                                      <span className="font-medium text-sm">
-                                        {donation.donor_name || "Anonymous"}
-                                      </span>
-
-                                      <div className="flex items-center space-x-4 text-sm">
-                                        <span className="text-gray-700 font-medium">
-                                          ${donation.amount.toLocaleString()}
-                                        </span>
-                                        <span className="text-gray-500">
-                                          {new Date(
-                                            donation.created_at
-                                          ).toLocaleDateString("en-US", {
-                                            month: "short",
-                                            day: "numeric",
-                                            year: "numeric",
-                                          })}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                  {(() => {
+                    const donations = occasion.charities.flatMap((c) =>
+                      (c.donations || []).map((d) => ({ ...d, _charityName: c.name }))
+                    );
+                    if (donations.length === 0) return null;
+                    return (
+                      <div className="mt-6">
+                        <div className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 rounded-lg">
+                          <span className="text-sm">Donations</span>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        <div className="mt-4 space-y-3 px-1">
+                          {donations.map((donation) => (
+                            <div
+                              key={donation._id}
+                              className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                            >
+                              <div className="flex flex-col">
+                                <span className="font-medium text-sm">
+                                  {donation.donor_name || "Anonymous"}
+                                </span>
+                                <span className="text-xs text-gray-500">{(donation as any)._charityName}</span>
+                              </div>
+                              <div className="flex items-center space-x-4 text-sm">
+                                <span className="text-gray-700 font-medium">
+                                  ${donation.amount.toLocaleString()}
+                                </span>
+                                <span className="text-gray-500">
+                                  {new Date(donation.created_at).toLocaleDateString("en-US", {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="flex space-x-2">
                   <motion.button
